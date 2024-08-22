@@ -1,95 +1,72 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-interface Props {}
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 export function Keyboard() {
-  const mass = [
-    "А",
-    "Б",
-    "В",
-    "Г",
-    "Д",
-    "Е",
-    "Ж",
-    "З",
-    "И",
-    "Й",
-    "К",
-    "Л",
-    "М",
-    "Н",
-    "О",
-    "П",
-    "Р",
-    "С",
-    "Т",
-    "У",
-    "Ф",
-    "Х",
-    "Ц",
-    "Ч",
-    "Ш",
-    "Щ",
-    "Ъ",
-    "Ы",
-    "Ь",
-    "Э",
-    "Ю",
-    "Я",
+  const russianKeyboardOrder = [
+    { id: 1, key: 1, letter: "й" },
+    { id: 2, key: 1, letter: "ц" },
+    { id: 3, key: 1, letter: "у" },
+    { id: 4, key: 1, letter: "к" },
+    { id: 5, key: 1, letter: "е" },
+    { id: 6, key: 1, letter: "н" },
+    { id: 7, key: 1, letter: "г" },
+
+    { id: 8, key: 2, letter: "ш" },
+    { id: 9, key: 2, letter: "щ" },
+    { id: 10, key: 2, letter: "з" },
+    { id: 11, key: 2, letter: "х" },
+    { id: 12, key: 2, letter: "ъ" },
+
+    { id: 13, key: 3, letter: "ф" },
+    { id: 14, key: 3, letter: "ы" },
+    { id: 15, key: 3, letter: "в" },
+    { id: 16, key: 3, letter: "а" },
+    { id: 17, key: 3, letter: "п" },
+    { id: 18, key: 3, letter: "р" },
+    { id: 19, key: 3, letter: "о" },
+
+    { id: 20, key: 4, letter: "л" },
+    { id: 21, key: 4, letter: "д" },
+    { id: 22, key: 4, letter: "ж" },
+    { id: 23, key: 4, letter: "э" },
+    { id: 24, key: 4, letter: "я" },
+    { id: 25, key: 4, letter: "ч" },
+    { id: 26, key: 4, letter: "с" },
+
+    { id: 27, key: 5, letter: "м" },
+    { id: 28, key: 5, letter: "и" },
+    { id: 29, key: 5, letter: "т" },
+    { id: 30, key: 5, letter: "ь" },
+    { id: 31, key: 5, letter: "б" },
+    { id: 32, key: 5, letter: "ю" },
+    { id: 33, key: 5, letter: "стереть" },
   ];
+
   return (
     <View>
       <View style={styles.container}>
         <View style={styles.keyboard}>
-          {mass.map((item) => {
+          {russianKeyboardOrder.map((item, index) => {
+            const isLastItem = index === russianKeyboardOrder.length - 1;
             return (
               <TouchableOpacity>
-                <LinearGradient
-                  style={{ borderRadius: 13 }}
-                  colors={["#2D3047", "#48475F"]}
-                >
-                  <Text style={styles.wordText}>{item}</Text>
-                </LinearGradient>
+                <View style={styles.wordBlock}>
+                  <Text
+                    style={[
+                      styles.wordText,
+                      isLastItem && styles.lastWordBlock,
+                    ]}
+                  >
+                    {item.letter}
+                  </Text>
+                </View>
               </TouchableOpacity>
             );
           })}
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            justifyContent: "space-between",
-            marginTop: 15,
-          }}
-        >
-          <TouchableOpacity>
-            <LinearGradient
-              style={{ borderRadius: 13 }}
-              colors={["#2D3047", "#48475F"]}
-            >
-              <Text style={{ fontSize: 23, padding: 15, color: "white" }}>
-                Cтереть
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <LinearGradient
-              style={{ borderRadius: 13 }}
-              colors={["#2D3047", "#48475F"]}
-            >
-              <Text style={{ fontSize: 23, padding: 15, color: "white" }}>
-                Далее
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={{ width: "100%", marginTop: 5 }}>
+          <Text style={styles.button}>Проверить слово</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -97,24 +74,37 @@ export function Keyboard() {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
-    width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 5,
   },
   keyboard: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
-    justifyContent: "center",
+    gap: 5,
   },
   wordText: {
     overflow: "hidden",
     fontSize: 23,
-    textAlign: "center",
+    paddingVertical: 8,
+    width: 27,
     color: "white",
-    padding: 10,
-    width: 47,
+    textAlign: "center",
+    backgroundColor: "black",
+    borderRadius: 8,
+  },
+  lastWordBlock: {
+    width: 124,
+  },
+  wordBlock: {},
+  button: {
+    paddingVertical: 15,
+    backgroundColor: "black",
+    width: "100%",
+    color: "white",
+    textAlign: "center",
+    overflow: "hidden",
+    borderRadius: 10,
+    fontSize: 18,
   },
 });
