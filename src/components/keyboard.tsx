@@ -52,14 +52,21 @@ export function Keyboard() {
     setWord(currentWord);
   };
   const handleCheck = () => "";
-  const handleClear = () => "";
+  const handleClear = (symbol: string) => {};
   return (
     <View>
       <View style={styles.container}>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           {word.map((item) => {
             return (
-              <View style={{ gap: 15, flexDirection: "row", flexWrap: "wrap" }}>
+              <View
+                style={{
+                  gap: 15,
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  flexShrink: 3,
+                }}
+              >
                 {item.map((item) => {
                   return (
                     <View style={{ gap: 5 }}>
