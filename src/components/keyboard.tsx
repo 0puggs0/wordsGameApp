@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 export function Keyboard() {
-  const russianKeyboardOrder = [
+  const russianKeyboardData = [
     { id: 1, key: 1, letter: "й" },
     { id: 2, key: 1, letter: "ц" },
     { id: 3, key: 1, letter: "у" },
@@ -41,15 +41,52 @@ export function Keyboard() {
     { id: 32, key: 5, letter: "ю" },
     { id: 33, key: 5, letter: "стереть" },
   ];
-
+  const initialValue = ["Емеля".split("")];
+  const [currentColumn, setCurrentColumn] = useState(0);
+  const [currentRow, setCurrentRow] = useState(0);
+  const [word, setWord] = useState([Array.from({ length: 25 }, () => "")]);
+  const handleInput = (symbol: string) => {
+    const currentWord = [...word];
+    currentWord[currentRow][currentColumn] = symbol;
+    setCurrentColumn((prev) => prev + 1);
+    setWord(currentWord);
+  };
+  const handleCheck = () => "";
+  const handleClear = () => "";
   return (
     <View>
       <View style={styles.container}>
-        <View style={styles.keyboard}>
-          {russianKeyboardOrder.map((item, index) => {
-            const isLastItem = index === russianKeyboardOrder.length - 1;
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          {word.map((item) => {
             return (
-              <TouchableOpacity>
+              <View style={{ gap: 15, flexDirection: "row", flexWrap: "wrap" }}>
+                {item.map((item) => {
+                  return (
+                    <View style={{ gap: 5 }}>
+                      <Text
+                        style={{
+                          marginLeft: 5,
+                          padding: 15,
+                          overflow: "hidden",
+                          backgroundColor: "gray",
+                          width: 50,
+                          textAlign: "center",
+                        }}
+                      >
+                        {item}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            );
+          })}
+        </View>
+        <View style={styles.keyboard}>
+          {russianKeyboardData.map((item, index) => {
+            const isLastItem = index === russianKeyboardData.length - 1;
+            return (
+              <TouchableOpacity onPress={() => handleInput(item.letter)}>
                 <View style={styles.wordBlock}>
                   <Text
                     style={[
