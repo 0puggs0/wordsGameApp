@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
@@ -44,7 +45,7 @@ export function Keyboard() {
   const initialValue = ["Емеля".split("")];
   const [currentColumn, setCurrentColumn] = useState(0);
   const [currentRow, setCurrentRow] = useState(0);
-  const [word, setWord] = useState([Array.from({ length: 25 }, () => "")]);
+  const [word, setWord] = useState([Array.from({ length: 30 }, () => "")]);
   const handleInput = (symbol: string) => {
     const currentWord = [...word];
     currentWord[currentRow][currentColumn] = symbol;
@@ -61,27 +62,37 @@ export function Keyboard() {
             return (
               <View
                 style={{
-                  gap: 15,
+                  gap: 3,
                   flexDirection: "row",
                   flexWrap: "wrap",
-                  flexShrink: 3,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 {item.map((item) => {
                   return (
-                    <View style={{ gap: 5 }}>
-                      <Text
+                    <View style={{}}>
+                      <LinearGradient
+                        colors={["#2D3047", "#48495F"]}
                         style={{
-                          marginLeft: 5,
-                          padding: 15,
+                          width: 73,
+                          height: 67,
+                          borderRadius: 10,
                           overflow: "hidden",
-                          backgroundColor: "gray",
-                          width: 50,
-                          textAlign: "center",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
                       >
-                        {item}
-                      </Text>
+                        <Text
+                          style={{
+                            color: "#A3A3AE",
+                            fontSize: 38,
+                            fontFamily: "Nunito-Bold",
+                          }}
+                        >
+                          {item.toUpperCase()}
+                        </Text>
+                      </LinearGradient>
                     </View>
                   );
                 })}
@@ -134,8 +145,9 @@ const styles = StyleSheet.create({
     width: 27,
     color: "white",
     textAlign: "center",
-    backgroundColor: "black",
+    backgroundColor: "#343548",
     borderRadius: 8,
+    fontFamily: "Nunito-Regular",
   },
   lastWordBlock: {
     width: 124,
@@ -143,12 +155,13 @@ const styles = StyleSheet.create({
   wordBlock: {},
   button: {
     paddingVertical: 15,
-    backgroundColor: "black",
+    backgroundColor: "#343548",
     width: "100%",
     color: "white",
     textAlign: "center",
     overflow: "hidden",
-    borderRadius: 10,
+    borderRadius: 7,
     fontSize: 18,
+    fontFamily: "Nunito-Regular",
   },
 });
