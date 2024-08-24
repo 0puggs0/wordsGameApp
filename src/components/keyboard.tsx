@@ -45,12 +45,25 @@ export function Keyboard() {
   const initialValue = ["Емеля".split("")];
   const [currentColumn, setCurrentColumn] = useState(0);
   const [currentRow, setCurrentRow] = useState(0);
-  const [word, setWord] = useState([Array.from({ length: 30 }, () => "")]);
+  const [word, setWord] = useState([
+    ["", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", ""],
+    ["", "", "", "", ""],
+  ]);
   const handleInput = (symbol: string) => {
     const currentWord = [...word];
+
+    if (currentColumn >= 4) {
+      setCurrentColumn(-1);
+      setCurrentRow((prev) => prev + 1);
+    }
     currentWord[currentRow][currentColumn] = symbol;
     setCurrentColumn((prev) => prev + 1);
     setWord(currentWord);
+    console.log(word);
   };
   const handleCheck = () => "";
   const handleClear = (symbol: string) => {};
