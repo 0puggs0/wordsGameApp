@@ -40,7 +40,11 @@ export function Keyboard() {
     { id: 30, key: 5, letter: "ь" },
     { id: 31, key: 5, letter: "б" },
     { id: 32, key: 5, letter: "ю" },
-    { id: 33, key: 5, letter: "стереть" },
+    {
+      id: 33,
+      key: 5,
+      letter: "стереть",
+    },
   ];
   const initialValue = ["Емеля".split("")];
   const [currentColumn, setCurrentColumn] = useState(0);
@@ -63,10 +67,15 @@ export function Keyboard() {
     currentWord[currentRow][currentColumn] = symbol;
     setCurrentColumn((prev) => prev + 1);
     setWord(currentWord);
-    console.log(word);
   };
   const handleCheck = () => "";
-  const handleClear = (symbol: string) => {};
+  const handleClear = () => {
+    const currentWord = [...word];
+    currentWord[currentRow][currentColumn - 1] = "";
+    if (currentColumn >= 1) {
+      setCurrentColumn((prev) => prev - 1);
+    }
+  };
   return (
     <View>
       <View style={styles.container}>
@@ -117,7 +126,11 @@ export function Keyboard() {
           {russianKeyboardData.map((item, index) => {
             const isLastItem = index === russianKeyboardData.length - 1;
             return (
-              <TouchableOpacity onPress={() => handleInput(item.letter)}>
+              <TouchableOpacity
+                onPress={() =>
+                  item.id < 33 ? handleInput(item.letter) : handleClear()
+                }
+              >
                 <View style={styles.wordBlock}>
                   <Text
                     style={[
