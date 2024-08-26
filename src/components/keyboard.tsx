@@ -1,8 +1,52 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 export function Keyboard() {
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const [data, setData] = useState("");
+  const [symbolColor, setSymbolColor] = useState("gray");
+  const [checkObj, setCheckObj] = useState({});
+
+  const getData = async () => {
+    const response = await fetch("https://api.rosggram.ru/words/").then(
+      (data) => data.json()
+    );
+    setData(response.word);
+  };
+  const checkString = (data: string) => {
+    const newArr = [];
+    const currentWord = [...word];
+    const input = currentWord[currentRow].join("");
+    const correctCounts: any = {};
+
+    for (let i = 0; i < input.length; i++) {
+      if (input[i] === data[i]) {
+        newArr.push({ index: i, color: "green" });
+        if (correctCounts[input[i]]) {
+          correctCounts[input[i]]++;
+        } else {
+          correctCounts[input[i]] = 1;
+        }
+      }
+    }
+    for (let i = 0; i < input.length; i++) {
+      if (
+        input[i] !== data[i] &&
+        data.includes(input[i]) &&
+        (!correctCounts[input[i]] ||
+          correctCounts[input[i]] < data.split(input[i]).length - 1)
+      ) {
+        newArr.push({ index: i, color: "yellow" });
+        correctCounts[input[i]] = (correctCounts[input[i]] || 0) + 1;
+      }
+    }
+    return newArr;
+  };
+
   const russianKeyboardData = [
     { id: 1, key: 1, letter: "й" },
     { id: 2, key: 1, letter: "ц" },
@@ -60,15 +104,26 @@ export function Keyboard() {
   const handleInput = (symbol: string) => {
     const currentWord = [...word];
 
-    if (currentColumn >= 4) {
-      setCurrentColumn(-1);
+    if (currentColumn <= 4) {
+      currentWord[currentRow][currentColumn] = symbol;
+      setCurrentColumn((prev) => prev + 1);
+      setWord(currentWord);
+    }
+  };
+  const handleCheck = () => {
+    const currentWord = [...word];
+    if (data === currentWord[currentRow].join("")) {
+      // слово существует =>
+      // посимвольная проверка =>
+      console.log("Победа");
+    } else {
+      setCheckObj(checkString(data.toLowerCase()));
+      console.log(data);
+      setCurrentColumn(0);
       setCurrentRow((prev) => prev + 1);
     }
-    currentWord[currentRow][currentColumn] = symbol;
-    setCurrentColumn((prev) => prev + 1);
-    setWord(currentWord);
+    console.log(checkObj);
   };
-  const handleCheck = () => "";
   const handleClear = () => {
     const currentWord = [...word];
     currentWord[currentRow][currentColumn - 1] = "";
@@ -128,7 +183,9 @@ export function Keyboard() {
             return (
               <TouchableOpacity
                 onPress={() =>
-                  item.id < 33 ? handleInput(item.letter) : handleClear()
+                  item.letter.length === 1
+                    ? handleInput(item.letter)
+                    : handleClear()
                 }
               >
                 <View style={styles.wordBlock}>
@@ -145,7 +202,10 @@ export function Keyboard() {
             );
           })}
         </View>
-        <TouchableOpacity style={{ width: "100%", marginTop: 5 }}>
+        <TouchableOpacity
+          onPress={() => handleCheck()}
+          style={{ width: "100%", marginTop: 5 }}
+        >
           <Text style={styles.button}>Проверить слово</Text>
         </TouchableOpacity>
       </View>

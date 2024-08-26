@@ -1,4 +1,4 @@
-import data from "../constants/russian_output.json";
+import data from "../data/russian_output.json";
 interface MassItem {
   line: string;
 }
