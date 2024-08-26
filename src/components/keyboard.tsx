@@ -6,10 +6,8 @@ export function Keyboard() {
   useEffect(() => {
     getData();
   }, []);
-
   const [data, setData] = useState("");
-  const [symbolColor, setSymbolColor] = useState("gray");
-  const [checkObj, setCheckObj] = useState({});
+  const [checkObj, setCheckObj] = useState([]);
 
   const getData = async () => {
     const response = await fetch("https://api.rosggram.ru/words/").then(
@@ -20,7 +18,7 @@ export function Keyboard() {
   const checkString = (data: string) => {
     const newArr = [];
     const currentWord = [...word];
-    const input = currentWord[currentRow].join("");
+    const input = currentWord[currentRow].map((item) => item.symbol).join("");
     const correctCounts: any = {};
 
     for (let i = 0; i < input.length; i++) {
@@ -90,44 +88,229 @@ export function Keyboard() {
       letter: "стереть",
     },
   ];
-  const initialValue = ["Емеля".split("")];
   const [currentColumn, setCurrentColumn] = useState(0);
   const [currentRow, setCurrentRow] = useState(0);
   const [word, setWord] = useState([
-    ["", "", "", "", ""],
-    ["", "", "", "", ""],
-    ["", "", "", "", ""],
-    ["", "", "", "", ""],
-    ["", "", "", "", ""],
-    ["", "", "", "", ""],
+    [
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+    ],
+    [
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+    ],
+    [
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+    ],
+    [
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+    ],
+    [
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+    ],
+    [
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+      {
+        symbol: "",
+        backgroundColor: ["#2D3047", "#48495F"],
+        textColor: "#A3A3AE",
+      },
+    ],
   ]);
+
+  const colorMap = {
+    green: ["#4CAF50", "#81C784"], // Цвета для зеленого
+    yellow: ["#FFEB3B", "#FFF176"], // Цвета для желтого
+    default: ["#2D3047", "#48495F"], // Стандартные цвета
+  };
+
   const handleInput = (symbol: string) => {
     const currentWord = [...word];
 
     if (currentColumn <= 4) {
-      currentWord[currentRow][currentColumn] = symbol;
+      currentWord[currentRow][currentColumn].symbol = symbol;
       setCurrentColumn((prev) => prev + 1);
       setWord(currentWord);
     }
   };
   const handleCheck = () => {
     const currentWord = [...word];
-    if (data === currentWord[currentRow].join("")) {
-      // слово существует =>
-      // посимвольная проверка =>
+    const newCheckObj = checkString(data.toLowerCase());
+    if (data === currentWord[currentRow].map((item) => item.symbol).join("")) {
+      newCheckObj.forEach((item) => {
+        if (item.color === "green") {
+          currentWord[currentRow][item.index].textColor = "#1D6B55";
+          currentWord[currentRow][item.index].backgroundColor = colorMap.green;
+          setWord(currentWord);
+        }
+        if (item.color === "yellow") {
+          currentWord[currentRow][item.index].textColor = "#837035";
+          currentWord[currentRow][item.index].backgroundColor = colorMap.yellow;
+          setWord(currentWord);
+        }
+      });
       console.log("Победа");
     } else {
-      setCheckObj(checkString(data.toLowerCase()));
-      console.log(data);
+      newCheckObj.forEach((item) => {
+        if (item.color === "green") {
+          currentWord[currentRow][item.index].textColor = "#1D6B55";
+          currentWord[currentRow][item.index].backgroundColor = colorMap.green;
+          setWord(currentWord);
+        }
+        if (item.color === "yellow") {
+          currentWord[currentRow][item.index].backgroundColor = colorMap.yellow;
+          currentWord[currentRow][item.index].textColor = "#837035";
+
+          setWord(currentWord);
+        }
+      });
       setCurrentColumn(0);
       setCurrentRow((prev) => prev + 1);
     }
+    console.log(data);
     console.log(checkObj);
   };
   const handleClear = () => {
     const currentWord = [...word];
-    currentWord[currentRow][currentColumn - 1] = "";
     if (currentColumn >= 1) {
+      currentWord[currentRow][currentColumn - 1].symbol = "";
       setCurrentColumn((prev) => prev - 1);
     }
   };
@@ -135,7 +318,7 @@ export function Keyboard() {
     <View>
       <View style={styles.container}>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          {word.map((item) => {
+          {word.map((stroke, indexStroke) => {
             return (
               <View
                 style={{
@@ -146,11 +329,11 @@ export function Keyboard() {
                   alignItems: "center",
                 }}
               >
-                {item.map((item) => {
+                {stroke.map((symbol, indexSymbol) => {
                   return (
                     <View style={{}}>
                       <LinearGradient
-                        colors={["#2D3047", "#48495F"]}
+                        colors={word[indexStroke][indexSymbol].backgroundColor}
                         style={{
                           width: 73,
                           height: 67,
@@ -162,12 +345,12 @@ export function Keyboard() {
                       >
                         <Text
                           style={{
-                            color: "#A3A3AE",
+                            color: word[indexStroke][indexSymbol].textColor,
                             fontSize: 38,
                             fontFamily: "Nunito-Bold",
                           }}
                         >
-                          {item.toUpperCase()}
+                          {symbol.symbol.toUpperCase()}
                         </Text>
                       </LinearGradient>
                     </View>
