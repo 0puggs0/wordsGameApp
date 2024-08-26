@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { Keyboard } from "./src/components/keyboard";
 import { useFonts } from "expo-font";
+import Word from "./src/screens/word";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -12,14 +12,12 @@ export default function App() {
     "Nunito-ExtraBold": require("./assets/fonts/Nunito-ExtraBold.ttf"),
     "Nunito-Light": require("./assets/fonts/Nunito-Light.ttf"),
   });
-
   if (!fontsLoaded) {
     return undefined;
   }
   return (
     <View style={styles.container}>
-      {/* <Words></Words> */}
-      <Keyboard></Keyboard>
+      <Word></Word>
       <StatusBar style="light" />
     </View>
   );
@@ -27,10 +25,6 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 50,
-    flex: 1,
     backgroundColor: "#1D1F25",
-    alignItems: "center",
-    justifyContent: "flex-end",
   },
 });
