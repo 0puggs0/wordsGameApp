@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { KeyboardItem } from "../interfaces/wordScreenInterface";
 
 interface Props {
   handleCheck: () => void;
@@ -7,47 +8,49 @@ interface Props {
   handleInput: (symbol: string) => void;
 }
 export function Keyboard(props: Props) {
-  const russianKeyboardData = [
-    { id: 1, key: 1, letter: "й" },
-    { id: 2, key: 1, letter: "ц" },
-    { id: 3, key: 1, letter: "у" },
-    { id: 4, key: 1, letter: "к" },
-    { id: 5, key: 1, letter: "е" },
-    { id: 6, key: 1, letter: "н" },
-    { id: 7, key: 1, letter: "г" },
+  const russianKeyboardData: KeyboardItem[] = [
+    { id: 1, key: 1, letter: "й", backgroundColor: "#343548", color: "white" },
+    { id: 2, key: 1, letter: "ц", backgroundColor: "#343548", color: "white" },
+    { id: 3, key: 1, letter: "у", backgroundColor: "#343548", color: "white" },
+    { id: 4, key: 1, letter: "к", backgroundColor: "#343548", color: "white" },
+    { id: 5, key: 1, letter: "е", backgroundColor: "#343548", color: "white" },
+    { id: 6, key: 1, letter: "н", backgroundColor: "#343548", color: "white" },
+    { id: 7, key: 1, letter: "г", backgroundColor: "#343548", color: "white" },
 
-    { id: 8, key: 2, letter: "ш" },
-    { id: 9, key: 2, letter: "щ" },
-    { id: 10, key: 2, letter: "з" },
-    { id: 11, key: 2, letter: "х" },
-    { id: 12, key: 2, letter: "ъ" },
+    { id: 8, key: 2, letter: "ш", backgroundColor: "#343548", color: "white" },
+    { id: 9, key: 2, letter: "щ", backgroundColor: "#343548", color: "white" },
+    { id: 10, key: 2, letter: "з", backgroundColor: "#343548", color: "white" },
+    { id: 11, key: 2, letter: "х", backgroundColor: "#343548", color: "white" },
+    { id: 12, key: 2, letter: "ъ", backgroundColor: "#343548", color: "white" },
 
-    { id: 13, key: 3, letter: "ф" },
-    { id: 14, key: 3, letter: "ы" },
-    { id: 15, key: 3, letter: "в" },
-    { id: 16, key: 3, letter: "а" },
-    { id: 17, key: 3, letter: "п" },
-    { id: 18, key: 3, letter: "р" },
-    { id: 19, key: 3, letter: "о" },
+    { id: 13, key: 3, letter: "ф", backgroundColor: "#343548", color: "white" },
+    { id: 14, key: 3, letter: "ы", backgroundColor: "#343548", color: "white" },
+    { id: 15, key: 3, letter: "в", backgroundColor: "#343548", color: "white" },
+    { id: 16, key: 3, letter: "а", backgroundColor: "#343548", color: "white" },
+    { id: 17, key: 3, letter: "п", backgroundColor: "#343548", color: "white" },
+    { id: 18, key: 3, letter: "р", backgroundColor: "#343548", color: "white" },
+    { id: 19, key: 3, letter: "о", backgroundColor: "#343548", color: "white" },
 
-    { id: 20, key: 4, letter: "л" },
-    { id: 21, key: 4, letter: "д" },
-    { id: 22, key: 4, letter: "ж" },
-    { id: 23, key: 4, letter: "э" },
-    { id: 24, key: 4, letter: "я" },
-    { id: 25, key: 4, letter: "ч" },
-    { id: 26, key: 4, letter: "с" },
+    { id: 20, key: 4, letter: "л", backgroundColor: "#343548", color: "white" },
+    { id: 21, key: 4, letter: "д", backgroundColor: "#343548", color: "white" },
+    { id: 22, key: 4, letter: "ж", backgroundColor: "#343548", color: "white" },
+    { id: 23, key: 4, letter: "э", backgroundColor: "#343548", color: "white" },
+    { id: 24, key: 4, letter: "я", backgroundColor: "#343548", color: "white" },
+    { id: 25, key: 4, letter: "ч", backgroundColor: "#343548", color: "white" },
+    { id: 26, key: 4, letter: "с", backgroundColor: "#343548", color: "white" },
 
-    { id: 27, key: 5, letter: "м" },
-    { id: 28, key: 5, letter: "и" },
-    { id: 29, key: 5, letter: "т" },
-    { id: 30, key: 5, letter: "ь" },
-    { id: 31, key: 5, letter: "б" },
-    { id: 32, key: 5, letter: "ю" },
+    { id: 27, key: 5, letter: "м", backgroundColor: "#343548", color: "white" },
+    { id: 28, key: 5, letter: "и", backgroundColor: "#343548", color: "white" },
+    { id: 29, key: 5, letter: "т", backgroundColor: "#343548", color: "white" },
+    { id: 30, key: 5, letter: "ь", backgroundColor: "#343548", color: "white" },
+    { id: 31, key: 5, letter: "б", backgroundColor: "#343548", color: "white" },
+    { id: 32, key: 5, letter: "ю", backgroundColor: "#343548", color: "white" },
     {
       id: 33,
       key: 5,
       letter: "стереть",
+      backgroundColor: "#343548",
+      color: "white",
     },
   ];
   return (
@@ -80,9 +83,9 @@ export function Keyboard(props: Props) {
         </View>
         <TouchableOpacity
           onPress={() => props.handleCheck()}
-          style={{ width: "100%", marginTop: 5 }}
+          style={{ paddingHorizontal: 5, width: "100%", marginTop: 5 }}
         >
-          <Text style={styles.button}>Проверить слово</Text>
+          <Text style={styles.button}>ПРОВЕРИТЬ СЛОВО</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -96,7 +99,9 @@ const styles = StyleSheet.create({
   keyboard: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 5,
+    gap: 4,
+    justifyContent: "center",
+    paddingHorizontal: 5,
   },
   wordText: {
     overflow: "hidden",
@@ -110,7 +115,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Regular",
   },
   lastWordBlock: {
-    width: 124,
+    width: 122,
   },
   wordBlock: {},
   button: {
@@ -121,7 +126,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     overflow: "hidden",
     borderRadius: 7,
-    fontSize: 18,
-    fontFamily: "Nunito-Regular",
+    fontSize: 15,
+    fontFamily: "Nunito-SemiBold",
   },
 });
