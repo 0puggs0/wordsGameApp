@@ -9,4 +9,5 @@ export interface KeyboardItem {
   letter: string;
   backgroundColor: string;
   color: string;
+  disabled: boolean;
 }

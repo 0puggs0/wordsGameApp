@@ -12,7 +12,6 @@ export const checkString = (
   const currentWord = [...word];
   const input = currentWord[currentRow].map((item) => item.symbol).join("");
   const correctCounts: any = {};
-
   for (let i = 0; i < input.length; i++) {
     if (input[i] === data[i]) {
       newArr.push({ index: i, color: "green", symbol: input[i] });
@@ -21,11 +20,7 @@ export const checkString = (
           item.backgroundColor = "#02C39A";
         }
       });
-      if (correctCounts[input[i]]) {
-        correctCounts[input[i]]++;
-      } else {
-        correctCounts[input[i]] = 1;
-      }
+      correctCounts[input[i]] = (correctCounts[input[i]] || 0) + 1;
     }
   }
   for (let i = 0; i < input.length; i++) {
@@ -44,7 +39,17 @@ export const checkString = (
       correctCounts[input[i]] = (correctCounts[input[i]] || 0) + 1;
     }
   }
-  setRussianKeyboardData(currentKeyboard);
+  for (let i = 0; i < input.length; i++) {
+    if (!data.includes(input[i])) {
+      newArr.push({ index: i, color: "gray", symbol: input[i] });
+      currentKeyboard.forEach((item) => {
+        if (item.letter === input[i]) {
+          item.backgroundColor = "#B0B0B0";
+        }
+      });
+    }
+  }
 
+  setRussianKeyboardData(currentKeyboard);
   return newArr;
 };
