@@ -6,6 +6,7 @@ interface Props {
   handleCheck: () => void;
   handleClear: () => void;
   handleInput: (symbol: string) => void;
+  russianKeyboardData: KeyboardItem[];
 }
 export function Keyboard(props: Props) {
   const russianKeyboardData: KeyboardItem[] = [
@@ -57,7 +58,7 @@ export function Keyboard(props: Props) {
     <View>
       <View style={styles.container}>
         <View style={styles.keyboard}>
-          {russianKeyboardData.map((item, index) => {
+          {props.russianKeyboardData.map((item, index) => {
             const isLastItem = index === russianKeyboardData.length - 1;
             return (
               <TouchableOpacity
@@ -69,10 +70,18 @@ export function Keyboard(props: Props) {
               >
                 <View style={styles.wordBlock}>
                   <Text
-                    style={[
-                      styles.wordText,
-                      isLastItem && styles.lastWordBlock,
-                    ]}
+                    style={{
+                      overflow: "hidden",
+                      fontSize: 23,
+                      paddingVertical: 8,
+                      width: !isLastItem ? 27 : 120,
+                      color: "white",
+                      textAlign: "center",
+                      backgroundColor:
+                        props.russianKeyboardData[index].backgroundColor,
+                      borderRadius: 8,
+                      fontFamily: "Nunito-Regular",
+                    }}
                   >
                     {item.letter}
                   </Text>

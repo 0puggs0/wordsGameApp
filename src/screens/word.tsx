@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Keyboard } from "../components/keyboard";
-import { WordItem } from "../interfaces/wordScreenInterface";
+import { KeyboardItem, WordItem } from "../interfaces/wordScreenInterface";
 import { checkString } from "../utils/checkString";
 
 export default function Word() {
@@ -178,12 +178,60 @@ export default function Word() {
     ],
   ]);
   const colorMap = {
-    green: ["#4CAF50", "#81C784"], // Цвета для зеленого
-    yellow: ["#FFEB3B", "#FFF176"], // Цвета для желтого
+    green: ["#02C39A", "#189D7C"], // Цвета для зеленого
+    yellow: ["#D9B952", "#FDD85D"], // Цвета для желтого
     default: ["#2D3047", "#48495F"],
     greenText: "#1D6B55",
     yellowText: "#837035",
   };
+
+  const [russianKeyboardData, setRussianKeyboardData] = useState<
+    KeyboardItem[]
+  >([
+    { id: 1, key: 1, letter: "й", backgroundColor: "#343548", color: "white" },
+    { id: 2, key: 1, letter: "ц", backgroundColor: "#343548", color: "white" },
+    { id: 3, key: 1, letter: "у", backgroundColor: "#343548", color: "white" },
+    { id: 4, key: 1, letter: "к", backgroundColor: "#343548", color: "white" },
+    { id: 5, key: 1, letter: "е", backgroundColor: "#343548", color: "white" },
+    { id: 6, key: 1, letter: "н", backgroundColor: "#343548", color: "white" },
+    { id: 7, key: 1, letter: "г", backgroundColor: "#343548", color: "white" },
+
+    { id: 8, key: 2, letter: "ш", backgroundColor: "#343548", color: "white" },
+    { id: 9, key: 2, letter: "щ", backgroundColor: "#343548", color: "white" },
+    { id: 10, key: 2, letter: "з", backgroundColor: "#343548", color: "white" },
+    { id: 11, key: 2, letter: "х", backgroundColor: "#343548", color: "white" },
+    { id: 12, key: 2, letter: "ъ", backgroundColor: "#343548", color: "white" },
+
+    { id: 13, key: 3, letter: "ф", backgroundColor: "#343548", color: "white" },
+    { id: 14, key: 3, letter: "ы", backgroundColor: "#343548", color: "white" },
+    { id: 15, key: 3, letter: "в", backgroundColor: "#343548", color: "white" },
+    { id: 16, key: 3, letter: "а", backgroundColor: "#343548", color: "white" },
+    { id: 17, key: 3, letter: "п", backgroundColor: "#343548", color: "white" },
+    { id: 18, key: 3, letter: "р", backgroundColor: "#343548", color: "white" },
+    { id: 19, key: 3, letter: "о", backgroundColor: "#343548", color: "white" },
+
+    { id: 20, key: 4, letter: "л", backgroundColor: "#343548", color: "white" },
+    { id: 21, key: 4, letter: "д", backgroundColor: "#343548", color: "white" },
+    { id: 22, key: 4, letter: "ж", backgroundColor: "#343548", color: "white" },
+    { id: 23, key: 4, letter: "э", backgroundColor: "#343548", color: "white" },
+    { id: 24, key: 4, letter: "я", backgroundColor: "#343548", color: "white" },
+    { id: 25, key: 4, letter: "ч", backgroundColor: "#343548", color: "white" },
+    { id: 26, key: 4, letter: "с", backgroundColor: "#343548", color: "white" },
+
+    { id: 27, key: 5, letter: "м", backgroundColor: "#343548", color: "white" },
+    { id: 28, key: 5, letter: "и", backgroundColor: "#343548", color: "white" },
+    { id: 29, key: 5, letter: "т", backgroundColor: "#343548", color: "white" },
+    { id: 30, key: 5, letter: "ь", backgroundColor: "#343548", color: "white" },
+    { id: 31, key: 5, letter: "б", backgroundColor: "#343548", color: "white" },
+    { id: 32, key: 5, letter: "ю", backgroundColor: "#343548", color: "white" },
+    {
+      id: 33,
+      key: 5,
+      letter: "стереть",
+      backgroundColor: "#343548",
+      color: "white",
+    },
+  ]);
 
   const getData = async () => {
     const response = await fetch("https://api.rosggram.ru/words/").then(
@@ -203,12 +251,19 @@ export default function Word() {
   };
   const handleCheck = () => {
     const currentWord = [...word];
-    const newCheckObj = checkString(data.toLowerCase(), word, currentRow);
+    const newCheckObj = checkString(
+      data.toLowerCase(),
+      word,
+      currentRow,
+      russianKeyboardData,
+      setRussianKeyboardData
+    );
     if (data === currentWord[currentRow].map((item) => item.symbol).join("")) {
       newCheckObj.forEach((item) => {
         if (item.color === "green") {
           currentWord[currentRow][item.index].textColor = colorMap.greenText;
           currentWord[currentRow][item.index].backgroundColor = colorMap.green;
+
           setWord(currentWord);
         }
         if (item.color === "yellow") {
@@ -217,6 +272,7 @@ export default function Word() {
           setWord(currentWord);
         }
       });
+
       console.log("Победа");
     } else {
       newCheckObj.forEach((item) => {
@@ -307,6 +363,7 @@ export default function Word() {
           handleCheck={handleCheck}
           handleClear={handleClear}
           handleInput={(symbol) => handleInput(symbol)}
+          russianKeyboardData={russianKeyboardData}
         />
       </View>
     </View>
