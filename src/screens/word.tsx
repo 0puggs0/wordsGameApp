@@ -4,179 +4,462 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Keyboard } from "../components/keyboard";
 import { KeyboardItem, WordItem } from "../interfaces/wordScreenInterface";
 import { checkString } from "../utils/checkString";
+import ModalWindow from "../components/modalWindow";
+import { wordArray } from "../constants/wordArray";
 
 export default function Word() {
   useEffect(() => {
     getData();
   }, []);
+  const [isWin, setIsWin] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const modalNext = () => {
+    setIsWin(false);
+    setModalVisible(false);
+    setWord([
+      [
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+      ],
+      [
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+      ],
+      [
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+      ],
+      [
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+      ],
+      [
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+      ],
+      [
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+        {
+          symbol: "",
+          backgroundColor: ["#2D3047", "#48495F"],
+          textColor: "#A3A3AE",
+        },
+      ],
+    ]);
+    setRussianKeyboardData([
+      {
+        id: 1,
+        key: 1,
+        letter: "й",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 2,
+        key: 1,
+        letter: "ц",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 3,
+        key: 1,
+        letter: "у",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 4,
+        key: 1,
+        letter: "к",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 5,
+        key: 1,
+        letter: "е",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 6,
+        key: 1,
+        letter: "н",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 7,
+        key: 1,
+        letter: "г",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+
+      {
+        id: 8,
+        key: 2,
+        letter: "ш",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 9,
+        key: 2,
+        letter: "щ",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 10,
+        key: 2,
+        letter: "з",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 11,
+        key: 2,
+        letter: "х",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 12,
+        key: 2,
+        letter: "ъ",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+
+      {
+        id: 13,
+        key: 3,
+        letter: "ф",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 14,
+        key: 3,
+        letter: "ы",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 15,
+        key: 3,
+        letter: "в",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 16,
+        key: 3,
+        letter: "а",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 17,
+        key: 3,
+        letter: "п",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 18,
+        key: 3,
+        letter: "р",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 19,
+        key: 3,
+        letter: "о",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+
+      {
+        id: 20,
+        key: 4,
+        letter: "л",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 21,
+        key: 4,
+        letter: "д",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 22,
+        key: 4,
+        letter: "ж",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 23,
+        key: 4,
+        letter: "э",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 24,
+        key: 4,
+        letter: "я",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 25,
+        key: 4,
+        letter: "ч",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 26,
+        key: 4,
+        letter: "с",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+
+      {
+        id: 27,
+        key: 5,
+        letter: "м",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 28,
+        key: 5,
+        letter: "и",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 29,
+        key: 5,
+        letter: "т",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 30,
+        key: 5,
+        letter: "ь",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 31,
+        key: 5,
+        letter: "б",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 32,
+        key: 5,
+        letter: "ю",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+      {
+        id: 33,
+        key: 5,
+        letter: "стереть",
+        backgroundColor: "#343548",
+        color: "white",
+        disabled: false,
+      },
+    ]);
+    setCurrentColumn(0);
+    setCurrentRow(0);
+    getData();
+  };
 
   const [data, setData] = useState<string>("");
   const [currentColumn, setCurrentColumn] = useState<number>(0);
   const [currentRow, setCurrentRow] = useState<number>(0);
-  const [word, setWord] = useState<Array<WordItem[]>>([
-    [
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-    ],
-    [
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-    ],
-    [
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-    ],
-    [
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-    ],
-    [
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-    ],
-    [
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-      {
-        symbol: "",
-        backgroundColor: ["#2D3047", "#48495F"],
-        textColor: "#A3A3AE",
-      },
-    ],
-  ]);
+  const [word, setWord] = useState<Array<WordItem[]>>([...wordArray]);
   const colorMap = {
     green: ["#02C39A", "#189D7C"], // Цвета для зеленого
     yellow: ["#D9B952", "#FDD85D"], // Цвета для желтого
@@ -483,7 +766,11 @@ export default function Word() {
       russianKeyboardData,
       setRussianKeyboardData
     );
+    if (currentRow > 4) {
+      setModalVisible(true);
+    }
     if (data === currentWord[currentRow].map((item) => item.symbol).join("")) {
+      setIsWin(true);
       newCheckObj.forEach((item) => {
         if (item.color === "green") {
           currentWord[currentRow][item.index].textColor = colorMap.greenText;
@@ -497,8 +784,7 @@ export default function Word() {
           setWord(currentWord);
         }
       });
-
-      console.log("Победа");
+      setModalVisible(true);
     } else {
       newCheckObj.forEach((item) => {
         if (item.color === "green") {
@@ -539,14 +825,20 @@ export default function Word() {
           <Text style={styles.headerText}>Рандомные слова</Text>
         </View>
         <View
-          style={{ alignItems: "center", justifyContent: "center", gap: 7 }}
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 10,
+            paddingHorizontal: 5,
+          }}
         >
           {word.map((stroke, indexStroke) => {
             return (
               <View
                 key={indexStroke}
                 style={{
-                  gap: 5,
+                  paddingHorizontal: 5,
+                  gap: 10,
                   flexDirection: "row",
                   flexWrap: "wrap",
                   justifyContent: "center",
@@ -559,8 +851,8 @@ export default function Word() {
                       <LinearGradient
                         colors={word[indexStroke][indexSymbol].backgroundColor}
                         style={{
-                          width: 70,
-                          height: 64,
+                          width: 65,
+                          height: 65,
                           borderRadius: 20,
                           overflow: "hidden",
                           justifyContent: "center",
@@ -590,6 +882,14 @@ export default function Word() {
           handleInput={(symbol) => handleInput(symbol)}
           russianKeyboardData={russianKeyboardData}
         />
+      </View>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <ModalWindow
+          correctWord={data}
+          modalVisible={modalVisible}
+          isWin={isWin}
+          modalNext={modalNext}
+        ></ModalWindow>
       </View>
     </View>
   );

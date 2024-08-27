@@ -13,10 +13,13 @@ export function Keyboard(props: Props) {
     <View>
       <View style={styles.container}>
         <View style={styles.keyboard}>
-          {props.russianKeyboardData.map((item, index) => {
+          {props.russianKeyboardData?.map((item, index) => {
             const isLastItem = index === props.russianKeyboardData.length - 1;
             return (
               <TouchableOpacity
+                style={{
+                  flexGrow: isLastItem ? 1 : 0,
+                }}
                 disabled={props.russianKeyboardData[index].disabled}
                 onPress={() =>
                   item.letter.length === 1
@@ -24,24 +27,23 @@ export function Keyboard(props: Props) {
                     : props.handleClear()
                 }
               >
-                <View style={styles.wordBlock}>
-                  <Text
-                    style={{
-                      overflow: "hidden",
-                      fontSize: 23,
-                      paddingVertical: 8,
-                      width: !isLastItem ? 27 : 120,
-                      color: "white",
-                      textAlign: "center",
-                      backgroundColor:
-                        props.russianKeyboardData[index].backgroundColor,
-                      borderRadius: 8,
-                      fontFamily: "Nunito-Regular",
-                    }}
-                  >
-                    {item.letter}
-                  </Text>
-                </View>
+                <Text
+                  style={{
+                    overflow: "hidden",
+                    fontSize: 23,
+                    paddingVertical: 8,
+                    width: isLastItem ? "100%" : 27, // Изменен порядок
+                    flexGrow: isLastItem ? 1 : 0, // Изменен порядок
+                    color: "white",
+                    textAlign: "center",
+                    backgroundColor:
+                      props.russianKeyboardData[index].backgroundColor,
+                    borderRadius: 8,
+                    fontFamily: "Nunito-Regular",
+                  }}
+                >
+                  {item.letter}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 4,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     paddingHorizontal: 5,
   },
   wordText: {
@@ -85,6 +87,7 @@ const styles = StyleSheet.create({
   wordBlock: {},
   button: {
     paddingVertical: 15,
+    paddingHorizontal: 10,
     backgroundColor: "#343548",
     width: "100%",
     color: "white",
