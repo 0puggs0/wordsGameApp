@@ -9,6 +9,8 @@ import { getWords } from "../constants/wordArray";
 import { getKeyboard } from "../constants/keyboardArray";
 
 export default function Word() {
+  const [isError, setIsError] = useState(false);
+  const [errorType, setErrorType] = useState("");
   const [isWin, setIsWin] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState<string>("");
@@ -57,6 +59,28 @@ export default function Word() {
     setCurrentColumn(0);
     setCurrentRow(0);
     getData();
+  };
+
+  const showErrorWordLengthModal = () => {
+    setIsError(true);
+    setErrorType("wordLength");
+    setModalVisible(true);
+    setTimeout(() => {
+      setIsError(false);
+      setErrorType("");
+      setModalVisible(false);
+    }, 1500);
+  };
+
+  const showErrorCorrectWordModal = () => {
+    setIsError(true);
+    setErrorType("correctWord");
+    setModalVisible(true);
+    setTimeout(() => {
+      setIsError(false);
+      setErrorType("");
+      setModalVisible(false);
+    }, 1500);
   };
 
   const handleInput = (symbol: string) => {
@@ -128,10 +152,10 @@ export default function Word() {
           setCurrentRow((prev) => prev + 1);
         }
       } else {
-        /// modal слова не существует
+        showErrorCorrectWordModal();
       }
     } else {
-      /// modal введите слово из 5 букв
+      showErrorWordLengthModal();
     }
     console.log(data);
   };
@@ -189,7 +213,9 @@ export default function Word() {
           modalVisible={modalVisible}
           isWin={isWin}
           modalNext={modalNext}
-        ></ModalWindow>
+          isError={isError}
+          errorType={errorType}
+        />
       </View>
     </View>
   );

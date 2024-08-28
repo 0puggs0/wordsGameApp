@@ -6,6 +6,8 @@ interface Props {
   modalVisible: boolean;
   isWin: boolean;
   modalNext: () => void;
+  isError: boolean;
+  errorType: string;
 }
 export default function ModalWindow(props: Props) {
   return (
@@ -25,40 +27,58 @@ export default function ModalWindow(props: Props) {
           }}
         >
           <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ fontFamily: "Nunito-Bold", fontSize: 25 }}>
-              {props.isWin ? "ПОБЕДА!" : "ПОРАЖЕНИЕ"}
-            </Text>
-            <Text style={{ fontFamily: "Nunito-Regular", fontSize: 19 }}>
-              Правильное слово - {props.correctWord}
-            </Text>
-          </View>
-          <View style={{ flexDirection: "row", gap: 15 }}>
-            <TouchableOpacity>
-              <Text
-                style={{
-                  padding: 15,
-                  overflow: "hidden",
-                  borderRadius: 10,
-                  backgroundColor: "#343548",
-                  color: "white",
-                }}
-              >
-                Выйти
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={props.modalNext}>
-              <Text
-                style={{
-                  padding: 15,
-                  overflow: "hidden",
-                  borderRadius: 10,
-                  backgroundColor: "#343548",
-                  color: "white",
-                }}
-              >
-                Далее
-              </Text>
-            </TouchableOpacity>
+            {props.isError ? (
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontFamily: "Nunito-Bold", fontSize: 25 }}>
+                  Ошибка!
+                </Text>
+                <Text style={{ fontFamily: "Nunito-Regular", fontSize: 19 }}>
+                  {props.errorType === "wordLength" &&
+                    "Введите слово из 5 букв"}
+                  {props.errorType === "correctWord" &&
+                    "Данного слова не существует"}
+                </Text>
+              </View>
+            ) : (
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontFamily: "Nunito-Bold", fontSize: 25 }}>
+                  {props.isWin ? "ПОБЕДА!" : "ПОРАЖЕНИЕ"}
+                </Text>
+                <Text style={{ fontFamily: "Nunito-Regular", fontSize: 19 }}>
+                  Правильное слово - {props.correctWord}
+                </Text>
+                <View>
+                  <View style={{ flexDirection: "row", gap: 15 }}>
+                    <TouchableOpacity>
+                      <Text
+                        style={{
+                          padding: 15,
+                          overflow: "hidden",
+                          borderRadius: 10,
+                          backgroundColor: "#343548",
+                          color: "white",
+                        }}
+                      >
+                        Выйти
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={props.modalNext}>
+                      <Text
+                        style={{
+                          padding: 15,
+                          overflow: "hidden",
+                          borderRadius: 10,
+                          backgroundColor: "#343548",
+                          color: "white",
+                        }}
+                      >
+                        Далее
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
         </View>
       </View>
