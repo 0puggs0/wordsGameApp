@@ -17,6 +17,7 @@ export function Keyboard(props: Props) {
             const isLastItem = index === props.russianKeyboardData.length - 1;
             return (
               <TouchableOpacity
+                key={item.letter}
                 style={{
                   flexGrow: isLastItem ? 1 : 0,
                 }}
@@ -32,8 +33,8 @@ export function Keyboard(props: Props) {
                     overflow: "hidden",
                     fontSize: 23,
                     paddingVertical: 8,
-                    width: isLastItem ? "100%" : 27, // Изменен порядок
-                    flexGrow: isLastItem ? 1 : 0, // Изменен порядок
+                    width: isLastItem ? "100%" : 27,
+                    flexGrow: isLastItem ? 1 : 0,
                     color: "white",
                     textAlign: "center",
                     backgroundColor:
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 4,
-    justifyContent: "flex-start",
+    justifyContent: "center",
     paddingHorizontal: 5,
   },
   wordText: {
