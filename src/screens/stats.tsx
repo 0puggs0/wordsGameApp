@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Stats() {
   const [currentWins, setCurrentWins] = useState(0);
   const [currentGames, setCurrentGames] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
   useEffect(() => {
     const fetchStorageData = async () => {
       const storageWins = await AsyncStorage.getItem("wins");
@@ -17,6 +18,11 @@ export default function Stats() {
         const intGames = parseInt(storageGames);
         setCurrentGames(intGames);
       }
+      const storageStreak = await AsyncStorage.getItem("currentStreak");
+      if (storageStreak !== null) {
+        const intCurrentStreak = parseInt(storageStreak);
+        setCurrentStreak(intCurrentStreak);
+      }
     };
     fetchStorageData();
   }, []);
@@ -24,10 +30,13 @@ export default function Stats() {
   const newArr = [
     { value: currentGames, title: "Игр" },
     {
-      value: currentGames !== 0 ? (currentWins / currentGames) * 100 : 0,
+      value:
+        currentGames !== 0
+          ? ((currentWins / currentGames) * 100).toFixed(1)
+          : 0,
       title: "Побед %",
     },
-    { value: 6, title: "Текущ. стрик" },
+    { value: currentStreak, title: "Текущ. стрик" },
     { value: 6, title: "Макс. стрик" },
   ];
   return (

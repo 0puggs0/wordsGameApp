@@ -51,12 +51,24 @@ export default function Word() {
     }
     if (isWin) {
       const currentWins = await AsyncStorage.getItem("wins");
+      const currentStreak = await AsyncStorage.getItem("currentStreak");
       if (currentWins === null) {
         await AsyncStorage.setItem("wins", "1");
       } else {
         const intWins = parseInt(currentWins);
         await AsyncStorage.setItem("wins", (intWins + 1).toString());
       }
+      if (currentStreak === null) {
+        await AsyncStorage.setItem("currentStreak", "1");
+      } else {
+        const intCurrentStreak = parseInt(currentStreak);
+        await AsyncStorage.setItem(
+          "currentStreak",
+          (intCurrentStreak + 1).toString()
+        );
+      }
+    } else {
+      await AsyncStorage.setItem("currentStreak", "0");
     }
     // await AsyncStorage.clear();
     resetStates();
