@@ -51,7 +51,7 @@ export function Keyboard(props: Props) {
         </View>
         <TouchableOpacity
           onPress={() => props.handleCheck()}
-          style={{ paddingHorizontal: 5, width: "100%", marginTop: 5 }}
+          style={styles.checkButton}
         >
           <Text style={styles.button}>ПРОВЕРИТЬ СЛОВО</Text>
         </TouchableOpacity>
@@ -97,5 +97,10 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     fontSize: 15,
     fontFamily: "Nunito-SemiBold",
+  },
+  checkButton: {
+    paddingHorizontal: 5,
+    width: "100%",
+    marginTop: 5,
   },
 });
