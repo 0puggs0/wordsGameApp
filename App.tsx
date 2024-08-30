@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
 import Word from "./src/screens/word";
+import Stats from "./src/screens/stats";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -17,7 +18,8 @@ export default function App() {
   }
   return (
     <View style={styles.container}>
-      <Word></Word>
+      {/* <Word /> */}
+      <Stats />
       <StatusBar style="light" />
     </View>
   );

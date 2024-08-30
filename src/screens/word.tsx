@@ -7,6 +7,7 @@ import { checkString } from "../utils/checkString";
 import ModalWindow from "../components/modalWindow";
 import { getWords } from "../constants/wordArray";
 import { getKeyboard } from "../constants/keyboardArray";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Word() {
   const [isError, setIsError] = useState(false);
@@ -40,7 +41,24 @@ export default function Word() {
     setData(response.word);
   };
 
-  const modalNext = () => {
+  const modalNext = async () => {
+    const currentPlayed = await AsyncStorage.getItem("played");
+    if (currentPlayed === null) {
+      await AsyncStorage.setItem("played", "1");
+    } else {
+      const intPlayed = parseInt(currentPlayed);
+      await AsyncStorage.setItem("played", (intPlayed + 1).toString());
+    }
+    if (isWin) {
+      const currentWins = await AsyncStorage.getItem("wins");
+      if (currentWins === null) {
+        await AsyncStorage.setItem("wins", "1");
+      } else {
+        const intWins = parseInt(currentWins);
+        await AsyncStorage.setItem("wins", (intWins + 1).toString());
+      }
+    }
+    // await AsyncStorage.clear();
     resetStates();
   };
 
