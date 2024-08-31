@@ -3,6 +3,8 @@ import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
 import Word from "./src/screens/word";
 import Stats from "./src/screens/stats";
+import { MyStack } from "./src/navigation/mainStack";
+import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -19,7 +21,10 @@ export default function App() {
   return (
     <View style={styles.container}>
       {/* <Word /> */}
-      <Stats />
+      {/* <Stats /> */}
+      <NavigationContainer>
+        <MyStack />
+      </NavigationContainer>
       <StatusBar style="light" />
     </View>
   );

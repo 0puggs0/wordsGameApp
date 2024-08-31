@@ -6,6 +6,7 @@ export default function Stats() {
   const [currentWins, setCurrentWins] = useState(0);
   const [currentGames, setCurrentGames] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [bestCurrentStreak, setBestCurrentStreak] = useState(0);
   useEffect(() => {
     const fetchStorageData = async () => {
       const storageWins = await AsyncStorage.getItem("wins");
@@ -23,6 +24,11 @@ export default function Stats() {
         const intCurrentStreak = parseInt(storageStreak);
         setCurrentStreak(intCurrentStreak);
       }
+      const storageBestStreak = await AsyncStorage.getItem("bestStreak");
+      if (storageBestStreak !== null) {
+        const intBestCurrentStreak = parseInt(storageBestStreak);
+        setBestCurrentStreak(intBestCurrentStreak);
+      }
     };
     fetchStorageData();
   }, []);
@@ -37,7 +43,7 @@ export default function Stats() {
       title: "Побед %",
     },
     { value: currentStreak, title: "Текущ. стрик" },
-    { value: 6, title: "Макс. стрик" },
+    { value: bestCurrentStreak, title: "Макс. стрик" },
   ];
   return (
     <View style={styles.container}>

@@ -52,6 +52,7 @@ export default function Word() {
     if (isWin) {
       const currentWins = await AsyncStorage.getItem("wins");
       const currentStreak = await AsyncStorage.getItem("currentStreak");
+      const bestStreak = await AsyncStorage.getItem("bestStreak");
       if (currentWins === null) {
         await AsyncStorage.setItem("wins", "1");
       } else {
@@ -66,6 +67,18 @@ export default function Word() {
           "currentStreak",
           (intCurrentStreak + 1).toString()
         );
+      }
+      if (bestStreak === null) {
+        await AsyncStorage.setItem("bestStreak", "1");
+      } else {
+        if (currentStreak !== null) {
+          if (parseInt(bestStreak) + 1 <= parseInt(currentStreak) + 1) {
+            await AsyncStorage.setItem(
+              "bestStreak",
+              (parseInt(currentStreak) + 1).toString()
+            );
+          }
+        }
       }
     } else {
       await AsyncStorage.setItem("currentStreak", "0");
@@ -258,6 +271,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 50,
+    backgroundColor: "#1D1F25",
   },
   container: {
     paddingHorizontal: 1,
