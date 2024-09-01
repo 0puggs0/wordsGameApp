@@ -8,8 +8,11 @@ import ModalWindow from "../components/modalWindow";
 import { getWords } from "../constants/wordArray";
 import { getKeyboard } from "../constants/keyboardArray";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StackScreenProps } from "@react-navigation/stack";
+import { RootStackParamList } from "../types/rootStackParamList";
 
-export default function Word() {
+type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
+export default function Word({ navigation }: Props) {
   const [isError, setIsError] = useState(false);
   const [errorType, setErrorType] = useState("");
   const [isWin, setIsWin] = useState(false);
@@ -85,6 +88,59 @@ export default function Word() {
     }
     // await AsyncStorage.clear();
     resetStates();
+  };
+
+  const modalExit = async () => {
+    const currentPlayed = await AsyncStorage.getItem("played");
+    if (currentPlayed === null) {
+      await AsyncStorage.setItem("played", "1");
+    } else {
+      const intPlayed = parseInt(currentPlayed);
+      await AsyncStorage.setItem("played", (intPlayed + 1).toString());
+    }
+    if (isWin) {
+      const currentWins = await AsyncStorage.getItem("wins");
+      const currentStreak = await AsyncStorage.getItem("currentStreak");
+      const bestStreak = await AsyncStorage.getItem("bestStreak");
+      if (currentWins === null) {
+        await AsyncStorage.setItem("wins", "1");
+      } else {
+        const intWins = parseInt(currentWins);
+        await AsyncStorage.setItem("wins", (intWins + 1).toString());
+      }
+      if (currentStreak === null) {
+        await AsyncStorage.setItem("currentStreak", "1");
+      } else {
+        const intCurrentStreak = parseInt(currentStreak);
+        await AsyncStorage.setItem(
+          "currentStreak",
+          (intCurrentStreak + 1).toString()
+        );
+      }
+      if (bestStreak === null) {
+        await AsyncStorage.setItem("bestStreak", "1");
+      } else {
+        if (currentStreak !== null) {
+          if (parseInt(bestStreak) + 1 <= parseInt(currentStreak) + 1) {
+            await AsyncStorage.setItem(
+              "bestStreak",
+              (parseInt(currentStreak) + 1).toString()
+            );
+          }
+        }
+      }
+    } else {
+      await AsyncStorage.setItem("currentStreak", "0");
+    }
+
+    setIsWin(false);
+    setModalVisible(false);
+    setWord(getWords());
+    setRussianKeyboardData(getKeyboard());
+    setCurrentColumn(0);
+    setCurrentRow(0);
+
+    navigation.navigate("InitialScreen");
   };
 
   const checkWordInData = async (input: string) => {
@@ -258,6 +314,7 @@ export default function Word() {
           modalNext={modalNext}
           isError={isError}
           errorType={errorType}
+          navigate={modalExit}
         />
       </View>
     </View>

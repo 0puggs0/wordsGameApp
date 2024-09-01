@@ -8,6 +8,7 @@ interface Props {
   modalNext: () => void;
   isError: boolean;
   errorType: string;
+  navigate: () => void;
 }
 export default function ModalWindow(props: Props) {
   return (
@@ -47,7 +48,7 @@ export default function ModalWindow(props: Props) {
                   </View>
 
                   <View style={styles.modalCheckButtonsBlock}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={props.navigate}>
                       <Text style={styles.modalCheckButton}>Выйти</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={props.modalNext}>
