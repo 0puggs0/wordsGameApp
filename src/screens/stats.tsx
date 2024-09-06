@@ -48,34 +48,12 @@ export default function Stats() {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <View
-          style={{
-            width: 66,
-            height: 66,
-            backgroundColor: "#CED5DB",
-            borderRadius: 32,
-          }}
-        ></View>
+        <View style={styles.logo}></View>
         <View>
-          <Text
-            style={{
-              color: "#CED5DB",
-              fontFamily: "Nunito-ExtraBold",
-              fontSize: 28,
-            }}
-          >
-            @puggsMaster
-          </Text>
+          <Text style={styles.nickname}>@puggsMaster</Text>
         </View>
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <View style={styles.statsBlock}>
         {newArr.map((item) => {
           return (
             <View style={{ alignItems: "center" }}>
@@ -119,5 +97,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 30,
+  },
+  logo: {
+    width: 66,
+    height: 66,
+    backgroundColor: "#CED5DB",
+    borderRadius: 32,
+  },
+  nickname: {
+    color: "#CED5DB",
+    fontFamily: "Nunito-ExtraBold",
+    fontSize: 28,
+  },
+  statsBlock: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

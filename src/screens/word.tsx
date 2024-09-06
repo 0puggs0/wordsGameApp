@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 
-type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
+type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
 export default function Word({ navigation }: Props) {
   const [isError, setIsError] = useState(false);
   const [errorType, setErrorType] = useState("");
@@ -86,7 +86,7 @@ export default function Word({ navigation }: Props) {
     } else {
       await AsyncStorage.setItem("currentStreak", "0");
     }
-    // await AsyncStorage.clear();
+    getData();
     resetStates();
   };
 
@@ -151,13 +151,14 @@ export default function Word({ navigation }: Props) {
   };
 
   const resetStates = () => {
-    setIsWin(false);
     setModalVisible(false);
-    setWord(getWords());
-    setRussianKeyboardData(getKeyboard());
-    setCurrentColumn(0);
-    setCurrentRow(0);
-    getData();
+    setTimeout(() => {
+      setIsWin(false);
+      setWord(getWords());
+      setRussianKeyboardData(getKeyboard());
+      setCurrentColumn(0);
+      setCurrentRow(0);
+    }, 100);
   };
 
   const showErrorWordLengthModal = () => {
@@ -165,9 +166,11 @@ export default function Word({ navigation }: Props) {
     setErrorType("wordLength");
     setModalVisible(true);
     setTimeout(() => {
-      setIsError(false);
-      setErrorType("");
       setModalVisible(false);
+      setTimeout(() => {
+        setIsError(false);
+        setErrorType("");
+      }, 300);
     }, 1500);
   };
 
@@ -176,9 +179,11 @@ export default function Word({ navigation }: Props) {
     setErrorType("correctWord");
     setModalVisible(true);
     setTimeout(() => {
-      setIsError(false);
-      setErrorType("");
       setModalVisible(false);
+      setTimeout(() => {
+        setIsError(false);
+        setErrorType("");
+      }, 300);
     }, 1500);
   };
 
