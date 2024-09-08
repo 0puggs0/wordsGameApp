@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
@@ -8,6 +8,8 @@ import { RootStackParamList } from "../types/rootStackParamList";
 type Props = StackScreenProps<RootStackParamList, "Login", "MyStack">;
 
 export default function Login({ navigation }: Props) {
+  const [passwordValue, setPasswordValue] = useState("");
+
   return (
     <View style={styles.container}>
       <View style={styles.topBlock}>
@@ -33,8 +35,11 @@ export default function Login({ navigation }: Props) {
           <TextInput
             placeholderTextColor={"#484B55"}
             placeholder="Пароль"
+            secureTextEntry={true}
             selectionColor={"#02C39A"}
             style={styles.textInput}
+            value={passwordValue}
+            onChangeText={(value) => setPasswordValue(value)}
           ></TextInput>
         </View>
         <TouchableOpacity>
@@ -43,7 +48,10 @@ export default function Login({ navigation }: Props) {
       </View>
       <View style={styles.bottomBlock}>
         <View style={styles.bottomButtons}>
-          <TouchableOpacity style={styles.topButton}>
+          <TouchableOpacity
+            onPress={() => console.log(passwordValue)}
+            style={styles.topButton}
+          >
             <Text style={styles.topButtonText}>Войти</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.centerButton}>
