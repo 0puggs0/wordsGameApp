@@ -1,12 +1,47 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
+import { baseUrl } from "../constants/api";
+import { Storage } from "../utils/storage";
 
 type Props = StackScreenProps<RootStackParamList, "Register", "MyStack">;
 
 export default function Register({ navigation }: Props) {
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // const getUser = async () => {
+  //   const response = await fetch(`https://api.rosggram.ru/five_letters/user`, {
+  //     headers: {
+  //       Authorization:
+  //         "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2xsZWN0aW9uSWQiOiJtb3owczlsbjNrbXc1NHQiLCJleHAiOjE3MjcxOTU2MzEsImlkIjoiM2NheHQycnc3b2Mxem9vIiwidHlwZSI6ImF1dGhSZWNvcmQifQ.qU6MgBUsRo79j0tDAfRPE0eNdOu9F_o-Y6OHp1mrAIU",
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  //   console.log(await response.json());
+  // };
+
+  const register = () => {
+    setIsLoading(true);
+    fetch(`${baseUrl}/five_letters/register`, {
+      method: "POST",
+      body: JSON.stringify({
+        username: userName,
+        email: userEmail,
+        password: userPassword,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        setIsLoading(false);
+        Storage.set("token", json.token);
+      });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.topBlock}>
@@ -26,25 +61,40 @@ export default function Register({ navigation }: Props) {
             placeholder="Имя"
             selectionColor={"#02C39A"}
             style={styles.textInput}
+            value={userName}
+            onChangeText={(value) => setUserName(value)}
           ></TextInput>
           <TextInput
             placeholderTextColor={"#484B55"}
             placeholder="Email"
             selectionColor={"#02C39A"}
             style={styles.textInput}
+            value={userEmail}
+            onChangeText={(value) => setUserEmail(value)}
           ></TextInput>
           <TextInput
             placeholderTextColor={"#484B55"}
             placeholder="Пароль"
             selectionColor={"#02C39A"}
             style={styles.textInput}
+            value={userPassword}
+            onChangeText={(value) => setUserPassword(value)}
           ></TextInput>
         </View>
       </View>
       <View style={styles.bottomBlock}>
         <View style={styles.bottomButtons}>
-          <TouchableOpacity style={styles.topButton}>
-            <Text style={styles.topButtonText}>Зарегистрироваться</Text>
+          <TouchableOpacity
+            onPress={() => {
+              register();
+            }}
+            style={styles.topButton}
+          >
+            {isLoading ? (
+              <ActivityIndicator size={"small"} color={"white"} />
+            ) : (
+              <Text style={styles.topButtonText}>Зарегистрироваться</Text>
+            )}
           </TouchableOpacity>
         </View>
         <View style={styles.register}>

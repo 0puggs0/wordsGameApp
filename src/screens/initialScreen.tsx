@@ -5,13 +5,19 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Storage } from "../utils/storage";
 type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
 
 export default function InitialScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.heading}>
-        <Text style={styles.headingFirst}>Catch</Text>
+        <Text
+          onPress={() => Storage.set("token", "123")}
+          style={styles.headingFirst}
+        >
+          Catch
+        </Text>
         <Text style={styles.headingSecond}>Word</Text>
       </View>
       <View style={styles.categories}>

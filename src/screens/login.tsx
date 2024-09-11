@@ -1,14 +1,36 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
+import { baseUrl } from "../constants/api";
 type Props = StackScreenProps<RootStackParamList, "Login", "MyStack">;
 
 export default function Login({ navigation }: Props) {
+  const [loginValue, setLoginValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const login = () => {
+    setIsLoading(true);
+    fetch(`${baseUrl}/five_letters/login`, {
+      method: "POST",
+      body: JSON.stringify({
+        email: loginValue,
+        password: passwordValue,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((token) => {
+        console.log(token);
+        setIsLoading(false);
+      });
+  };
 
   return (
     <View style={styles.container}>
@@ -31,6 +53,8 @@ export default function Login({ navigation }: Props) {
             placeholder="Логин"
             selectionColor={"#02C39A"}
             style={styles.textInput}
+            value={loginValue}
+            onChangeText={(value) => setLoginValue(value)}
           ></TextInput>
           <TextInput
             placeholderTextColor={"#484B55"}
@@ -48,11 +72,12 @@ export default function Login({ navigation }: Props) {
       </View>
       <View style={styles.bottomBlock}>
         <View style={styles.bottomButtons}>
-          <TouchableOpacity
-            onPress={() => console.log(passwordValue)}
-            style={styles.topButton}
-          >
-            <Text style={styles.topButtonText}>Войти</Text>
+          <TouchableOpacity onPress={() => login()} style={styles.topButton}>
+            {isLoading ? (
+              <ActivityIndicator color={"white"} size={"small"} />
+            ) : (
+              <Text style={styles.topButtonText}>Войти</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.centerButton}>
             <AntDesign name="google" size={24} color="black" />

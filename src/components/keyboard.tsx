@@ -7,6 +7,7 @@ interface Props {
   handleClear: () => void;
   handleInput: (symbol: string) => void;
   russianKeyboardData: KeyboardItem[];
+  disabledButton: boolean;
 }
 export function Keyboard(props: Props) {
   return (
@@ -50,6 +51,7 @@ export function Keyboard(props: Props) {
           })}
         </View>
         <TouchableOpacity
+          disabled={props.disabledButton}
           onPress={() => props.handleCheck()}
           style={styles.checkButton}
         >
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 15,
     paddingHorizontal: 10,
-    backgroundColor: "#343548",
+    backgroundColor: "#48495F",
     width: "100%",
     color: "white",
     textAlign: "center",

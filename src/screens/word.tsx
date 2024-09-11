@@ -24,15 +24,19 @@ export default function Word({ navigation }: Props) {
   const [russianKeyboardData, setRussianKeyboardData] = useState<
     KeyboardItem[]
   >(getKeyboard());
+  const [disabledButton, setDisabledButton] = useState(false);
 
   useEffect(() => {
     getData();
   }, []);
 
   const colorMap = {
-    green: ["#02C39A", "#189D7C"], // Цвета для зеленого
-    yellow: ["#D9B952", "#FDD85D"], // Цвета для желтого
+    green: ["#02C39A", "#189D7C"],
+    borderGreen: ["#189D7C", "#02C39A"],
+    yellow: ["#D9B952", "#FDD85D"],
+    borderYellow: ["#FDD85D", "#D9B952"],
     default: ["#2D3047", "#48495F"],
+    borderDefault: ["#48495F", "#2D3047"],
     greenText: "#1D6B55",
     yellowText: "#837035",
   };
@@ -197,6 +201,8 @@ export default function Word({ navigation }: Props) {
     }
   };
   const handleCheck = async () => {
+    setDisabledButton(true);
+
     const currentWord = [...word];
     if (currentColumn > 4) {
       if (
@@ -224,6 +230,8 @@ export default function Word({ navigation }: Props) {
                 colorMap.greenText;
               currentWord[currentRow][item.index].backgroundColor =
                 colorMap.green;
+              currentWord[currentRow][item.index].borderBackgroundColor =
+                colorMap.borderGreen;
               setWord(currentWord);
             }
             if (item.color === "yellow") {
@@ -231,6 +239,8 @@ export default function Word({ navigation }: Props) {
                 colorMap.yellowText;
               currentWord[currentRow][item.index].backgroundColor =
                 colorMap.yellow;
+              currentWord[currentRow][item.index].borderBackgroundColor =
+                colorMap.borderYellow;
               setWord(currentWord);
             }
           });
@@ -242,6 +252,8 @@ export default function Word({ navigation }: Props) {
                 colorMap.greenText;
               currentWord[currentRow][item.index].backgroundColor =
                 colorMap.green;
+              currentWord[currentRow][item.index].borderBackgroundColor =
+                colorMap.borderGreen;
               setWord(currentWord);
             }
             if (item.color === "yellow") {
@@ -249,6 +261,8 @@ export default function Word({ navigation }: Props) {
                 colorMap.yellowText;
               currentWord[currentRow][item.index].backgroundColor =
                 colorMap.yellow;
+              currentWord[currentRow][item.index].borderBackgroundColor =
+                colorMap.borderYellow;
               setWord(currentWord);
             }
           });
@@ -261,7 +275,8 @@ export default function Word({ navigation }: Props) {
     } else {
       showErrorWordLengthModal();
     }
-    console.log(data);
+    setDisabledButton(false);
+    // console.log(data);
   };
   const handleClear = () => {
     const currentWord = [...word];
@@ -281,21 +296,44 @@ export default function Word({ navigation }: Props) {
             return (
               <View key={indexStroke} style={styles.stroke}>
                 {stroke.map((symbol, indexSymbol) => {
+                  //word[indexStroke][indexSymbol].backgroundColor
                   return (
                     <View key={indexSymbol}>
                       <LinearGradient
-                        colors={word[indexStroke][indexSymbol].backgroundColor}
-                        style={styles.strokeGradient}
+                        style={{
+                          width: 65,
+                          height: 65,
+                          borderRadius: 15,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                        colors={
+                          word[indexStroke][indexSymbol].borderBackgroundColor
+                        }
                       >
-                        <Text
+                        <LinearGradient
+                          colors={
+                            word[indexStroke][indexSymbol].backgroundColor
+                          }
                           style={{
-                            color: word[indexStroke][indexSymbol].textColor,
-                            fontSize: 38,
-                            fontFamily: "Nunito-Bold",
+                            width: 50,
+                            height: 50,
+                            borderRadius: 10,
+                            overflow: "hidden",
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}
                         >
-                          {symbol.symbol.toUpperCase()}
-                        </Text>
+                          <Text
+                            style={{
+                              color: word[indexStroke][indexSymbol].textColor,
+                              fontSize: 38,
+                              fontFamily: "Nunito-Bold",
+                            }}
+                          >
+                            {symbol.symbol.toUpperCase()}
+                          </Text>
+                        </LinearGradient>
                       </LinearGradient>
                     </View>
                   );
@@ -309,6 +347,7 @@ export default function Word({ navigation }: Props) {
           handleClear={handleClear}
           handleInput={(symbol) => handleInput(symbol)}
           russianKeyboardData={russianKeyboardData}
+          disabledButton={disabledButton}
         />
       </View>
       <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -344,25 +383,18 @@ const styles = StyleSheet.create({
   strokeContainer: {
     alignItems: "center",
     justifyContent: "center",
-    gap: 5,
+    gap: 10,
     paddingHorizontal: 5,
   },
   stroke: {
     paddingHorizontal: 5,
-    gap: 5,
+    gap: 10,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
     alignItems: "center",
   },
-  strokeGradient: {
-    width: 70,
-    height: 70,
-    borderRadius: 20,
-    overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   headerText: {
     fontFamily: "Nunito-Bold",
     color: "#A3A3AE",

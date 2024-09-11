@@ -1,6 +1,7 @@
 export interface WordItem {
   symbol: string;
   backgroundColor: Array<string>;
+  borderBackgroundColor: Array<string>;
   textColor: string;
 }
 export interface KeyboardItem {
