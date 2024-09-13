@@ -5,7 +5,6 @@ import Word from "../screens/word";
 import { RootStackParamList } from "../types/rootStackParamList";
 import Login from "../screens/login";
 import Register from "../screens/register";
-import TestScreen from "../screens/testScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -16,11 +15,6 @@ export function MyStack() {
         headerShown: false,
       }}
     >
-      {/* <Stack.Screen
-        name="test"
-        component={TestScreen}
-        options={{ gestureEnabled: false }}
-      />
       <Stack.Screen
         name="Login"
         component={Login}
@@ -30,7 +24,7 @@ export function MyStack() {
         name="Register"
         component={Register}
         options={{ gestureEnabled: false }}
-      /> */}
+      />
       <Stack.Screen
         name="InitialScreen"
         component={InitialScreen}

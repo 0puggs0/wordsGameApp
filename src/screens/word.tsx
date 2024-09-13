@@ -10,6 +10,7 @@ import { getKeyboard } from "../constants/keyboardArray";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
+import { baseUrl } from "../constants/api";
 
 type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
 export default function Word({ navigation }: Props) {
@@ -42,8 +43,8 @@ export default function Word({ navigation }: Props) {
   };
 
   const getData = async () => {
-    const response = await fetch("https://api.rosggram.ru/words/").then(
-      (data) => data.json()
+    const response = await fetch(`${baseUrl}/five_letters/words`).then((data) =>
+      data.json()
     );
     setData(response.word);
   };
@@ -149,7 +150,7 @@ export default function Word({ navigation }: Props) {
 
   const checkWordInData = async (input: string) => {
     const response = await fetch(
-      `https://api.rosggram.ru/checkWord/${input}`
+      `${baseUrl}/five_letters/checkWord/${input}`
     ).then((data) => data.json());
     return response.message;
   };
@@ -296,13 +297,12 @@ export default function Word({ navigation }: Props) {
             return (
               <View key={indexStroke} style={styles.stroke}>
                 {stroke.map((symbol, indexSymbol) => {
-                  //word[indexStroke][indexSymbol].backgroundColor
                   return (
                     <View key={indexSymbol}>
                       <LinearGradient
                         style={{
-                          width: 65,
-                          height: 65,
+                          width: 60,
+                          height: 60,
                           borderRadius: 15,
                           alignItems: "center",
                           justifyContent: "center",

@@ -6,6 +6,7 @@ import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
+import { Storage } from "../utils/storage";
 type Props = StackScreenProps<RootStackParamList, "Login", "MyStack">;
 
 export default function Login({ navigation }: Props) {
@@ -26,9 +27,15 @@ export default function Login({ navigation }: Props) {
       },
     })
       .then((res) => res.json())
-      .then((token) => {
-        console.log(token);
+      .then((data) => {
+        if (data.data.token) {
+          navigation.navigate("InitialScreen");
+          Storage.set("token", data.data.token);
+        }
         setIsLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
       });
   };
 
@@ -55,6 +62,7 @@ export default function Login({ navigation }: Props) {
             style={styles.textInput}
             value={loginValue}
             onChangeText={(value) => setLoginValue(value)}
+            autoCapitalize="none"
           ></TextInput>
           <TextInput
             placeholderTextColor={"#484B55"}
@@ -64,6 +72,7 @@ export default function Login({ navigation }: Props) {
             style={styles.textInput}
             value={passwordValue}
             onChangeText={(value) => setPasswordValue(value)}
+            autoCapitalize="none"
           ></TextInput>
         </View>
         <TouchableOpacity>

@@ -1,1 +1,1 @@
-export const baseUrl = "https://api.rosggram.ru";
+export const baseUrl = "https://oh.sssh.it";

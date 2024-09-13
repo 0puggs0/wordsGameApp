@@ -1,11 +1,11 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
-import Word from "./src/screens/word";
-import Stats from "./src/screens/stats";
 import { MyStack } from "./src/navigation/mainStack";
 import { NavigationContainer } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const client = new QueryClient();
 export default function App() {
   const [fontsLoaded] = useFonts({
     "Nunito-Medium": require("./assets/fonts/Nunito-Medium.ttf"),
@@ -19,14 +19,16 @@ export default function App() {
     return undefined;
   }
   return (
-    <View style={styles.container}>
-      {/* <Word /> */}
-      {/* <Stats /> */}
-      <NavigationContainer>
-        <MyStack />
-      </NavigationContainer>
-      <StatusBar style="light" />
-    </View>
+    <QueryClientProvider client={client}>
+      <View style={styles.container}>
+        {/* <Word /> */}
+        {/* <Stats /> */}
+        <NavigationContainer>
+          <MyStack />
+        </NavigationContainer>
+        <StatusBar style="light" />
+      </View>
+    </QueryClientProvider>
   );
 }
 

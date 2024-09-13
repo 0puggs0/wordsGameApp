@@ -7,7 +7,6 @@ export default function Stats() {
   const [currentGames, setCurrentGames] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [bestCurrentStreak, setBestCurrentStreak] = useState(0);
-  const [isPressed, setIsPressed] = useState(false);
   useEffect(() => {
     const fetchStorageData = async () => {
       const storageWins = await AsyncStorage.getItem("wins");
@@ -34,7 +33,13 @@ export default function Stats() {
     fetchStorageData();
   }, []);
 
-  const newArr = [
+  const resetStates = () => {
+    setCurrentGames(0);
+    setBestCurrentStreak(0);
+    setCurrentStreak(0);
+    setCurrentWins(0);
+  };
+  const statsData = [
     { value: currentGames, title: "Игр" },
     {
       value:
@@ -58,9 +63,10 @@ export default function Stats() {
         </View>
       </View>
       <View style={styles.statsBlock}>
-        {newArr.map((item) => {
+        {statsData.map((item) => {
           return (
             <View
+              key={item.title}
               style={{
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -77,10 +83,7 @@ export default function Stats() {
         <TouchableOpacity
           onPress={async () => {
             await AsyncStorage.clear();
-            setCurrentGames(0);
-            setBestCurrentStreak(0);
-            setCurrentStreak(0);
-            setCurrentWins(0);
+            resetStates();
           }}
           style={styles.button}
         >

@@ -5,6 +5,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 type Props = StackScreenProps<RootStackParamList, "Register", "MyStack">;
 
@@ -12,36 +13,42 @@ export default function Register({ navigation }: Props) {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { error, data, isPending, mutate } = useMutation({
+    mutationKey: ["register", userName, userEmail, userPassword],
+    mutationFn: () => {
+      return fetch(`${baseUrl}/five_letters/register`, {
+        method: "POST",
+        body: JSON.stringify({
+          username: userName,
+          email: userEmail,
+          password: userPassword,
+        }),
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          Storage.set("token", json.token);
+        });
+    },
+  });
 
-  // const getUser = async () => {
-  //   const response = await fetch(`https://api.rosggram.ru/five_letters/user`, {
-  //     headers: {
-  //       Authorization:
-  //         "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2xsZWN0aW9uSWQiOiJtb3owczlsbjNrbXc1NHQiLCJleHAiOjE3MjcxOTU2MzEsImlkIjoiM2NheHQycnc3b2Mxem9vIiwidHlwZSI6ImF1dGhSZWNvcmQifQ.qU6MgBUsRo79j0tDAfRPE0eNdOu9F_o-Y6OHp1mrAIU",
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   console.log(await response.json());
+  // const register = () => {
+  //   setIsLoading(true);
+  //   fetch(`${baseUrl}/five_letters/register`, {
+  //     method: "POST",
+  //     body: JSON.stringify({
+  //       username: userName,
+  //       email: userEmail,
+  //       password: userPassword,
+  //     }),
+  //     headers: { "Content-Type": "application/json" },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((json) => {
+  //       setIsLoading(false);
+  //       Storage.set("token", json.token);
+  //     });
   // };
-
-  const register = () => {
-    setIsLoading(true);
-    fetch(`${baseUrl}/five_letters/register`, {
-      method: "POST",
-      body: JSON.stringify({
-        username: userName,
-        email: userEmail,
-        password: userPassword,
-      }),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        setIsLoading(false);
-        Storage.set("token", json.token);
-      });
-  };
   return (
     <View style={styles.container}>
       <View style={styles.topBlock}>
@@ -63,6 +70,8 @@ export default function Register({ navigation }: Props) {
             style={styles.textInput}
             value={userName}
             onChangeText={(value) => setUserName(value)}
+            keyboardAppearance="dark"
+            autoCapitalize="none"
           ></TextInput>
           <TextInput
             placeholderTextColor={"#484B55"}
@@ -71,6 +80,8 @@ export default function Register({ navigation }: Props) {
             style={styles.textInput}
             value={userEmail}
             onChangeText={(value) => setUserEmail(value)}
+            keyboardAppearance="dark"
+            autoCapitalize="none"
           ></TextInput>
           <TextInput
             placeholderTextColor={"#484B55"}
@@ -79,6 +90,8 @@ export default function Register({ navigation }: Props) {
             style={styles.textInput}
             value={userPassword}
             onChangeText={(value) => setUserPassword(value)}
+            keyboardAppearance="dark"
+            autoCapitalize="none"
           ></TextInput>
         </View>
       </View>
@@ -86,11 +99,11 @@ export default function Register({ navigation }: Props) {
         <View style={styles.bottomButtons}>
           <TouchableOpacity
             onPress={() => {
-              register();
+              mutate();
             }}
             style={styles.topButton}
           >
-            {isLoading ? (
+            {isPending ? (
               <ActivityIndicator size={"small"} color={"white"} />
             ) : (
               <Text style={styles.topButtonText}>Зарегистрироваться</Text>
