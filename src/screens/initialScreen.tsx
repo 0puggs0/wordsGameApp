@@ -1,25 +1,41 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
+import { baseUrl } from "../constants/api";
+
 type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
 
-export default function InitialScreen({ navigation }: Props) {
+export default function InitialScreen({ navigation, route }: Props) {
+  const token = Storage.get("token");
+  const { data, error, isPending } = useQuery({
+    queryKey: ["username"],
+    queryFn: async () => {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "",
+      };
+      if (token) {
+        headers.Authorization = token;
+      }
+      const response = await fetch(`${baseUrl}/five_letters/user`, {
+        headers: headers,
+      });
+      return response.json();
+    },
+  });
   return (
     <View style={styles.container}>
       <View style={styles.heading}>
-        <Text
-          onPress={() => Storage.set("token", "123")}
-          style={styles.headingFirst}
-        >
-          Catch
-        </Text>
+        <Text style={styles.headingFirst}>Catch</Text>
         <Text style={styles.headingSecond}>Word</Text>
       </View>
+
       <View style={styles.categories}>
         <TouchableOpacity
           style={styles.playButton}
@@ -41,6 +57,9 @@ export default function InitialScreen({ navigation }: Props) {
           </TouchableOpacity>
           <TouchableOpacity style={styles.centerButton}>
             <Feather name="user" size={40} color="black" />
+            <Text numberOfLines={1} style={styles.userHeading}>
+              {data?.username}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("Stats")}
@@ -51,7 +70,7 @@ export default function InitialScreen({ navigation }: Props) {
         </View>
         <View style={styles.signOutBlock}>
           <Text style={styles.signOutTitle}>Хотите сменить аккаунт?</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
             <Text style={styles.signOut}> Выйти</Text>
           </TouchableOpacity>
         </View>
@@ -87,8 +106,13 @@ const styles = StyleSheet.create({
     color: "#02C39A",
     textAlign: "center",
     fontSize: 50,
-    margin: 0,
-    padding: 0,
+  },
+  userHeading: {
+    paddingHorizontal: 10,
+    fontFamily: "Nunito-Medium",
+    color: "#1D1F25",
+    fontSize: 13,
+    textAlign: "center",
   },
   playButton: {
     width: "100%",

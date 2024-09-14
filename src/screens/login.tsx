@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -7,37 +7,41 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
+import { useMutation, useQuery } from "@tanstack/react-query";
 type Props = StackScreenProps<RootStackParamList, "Login", "MyStack">;
 
 export default function Login({ navigation }: Props) {
   const [loginValue, setLoginValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const login = () => {
-    setIsLoading(true);
-    fetch(`${baseUrl}/five_letters/login`, {
-      method: "POST",
-      body: JSON.stringify({
-        email: loginValue,
-        password: passwordValue,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.data.token) {
-          navigation.navigate("InitialScreen");
-          Storage.set("token", data.data.token);
-        }
-        setIsLoading(false);
+  const { isPending, mutate } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: () => {
+      return fetch(`${baseUrl}/five_letters/login`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: loginValue,
+          password: passwordValue,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.data.token) {
+            Storage.set("token", data.data.token);
+            navigation.navigate("InitialScreen");
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          Alert.alert("Ошибка", "Неверный логин или пароль");
+          setError(e);
+        });
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -81,8 +85,19 @@ export default function Login({ navigation }: Props) {
       </View>
       <View style={styles.bottomBlock}>
         <View style={styles.bottomButtons}>
-          <TouchableOpacity onPress={() => login()} style={styles.topButton}>
-            {isLoading ? (
+          <TouchableOpacity
+            onPress={() =>
+              passwordValue.length && loginValue.length
+                ? mutate()
+                : Alert.alert("Ошибка", "Вы ввели не все данные", [
+                    {
+                      text: "Закрыть",
+                    },
+                  ])
+            }
+            style={styles.topButton}
+          >
+            {isPending ? (
               <ActivityIndicator color={"white"} size={"small"} />
             ) : (
               <Text style={styles.topButtonText}>Войти</Text>

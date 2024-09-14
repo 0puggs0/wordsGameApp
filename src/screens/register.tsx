@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -28,6 +28,7 @@ export default function Register({ navigation }: Props) {
         .then((res) => res.json())
         .then((json) => {
           Storage.set("token", json.token);
+          navigation.navigate("Login");
         });
     },
   });
@@ -99,7 +100,11 @@ export default function Register({ navigation }: Props) {
         <View style={styles.bottomButtons}>
           <TouchableOpacity
             onPress={() => {
-              mutate();
+              userEmail.length && userName.length && userPassword.length
+                ? mutate()
+                : Alert.alert("Ошибка", "Вы ввели не все данные", [
+                    { text: "Закрыть" },
+                  ]);
             }}
             style={styles.topButton}
           >

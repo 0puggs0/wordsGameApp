@@ -26,7 +26,6 @@ export default function Word({ navigation }: Props) {
     KeyboardItem[]
   >(getKeyboard());
   const [disabledButton, setDisabledButton] = useState(false);
-
   useEffect(() => {
     getData();
   }, []);
@@ -46,6 +45,7 @@ export default function Word({ navigation }: Props) {
     const response = await fetch(`${baseUrl}/five_letters/words`).then((data) =>
       data.json()
     );
+    console.log(response.word);
     setData(response.word);
   };
 
@@ -301,8 +301,8 @@ export default function Word({ navigation }: Props) {
                     <View key={indexSymbol}>
                       <LinearGradient
                         style={{
-                          width: 60,
-                          height: 60,
+                          width: 65,
+                          height: 65,
                           borderRadius: 15,
                           alignItems: "center",
                           justifyContent: "center",
@@ -316,8 +316,8 @@ export default function Word({ navigation }: Props) {
                             word[indexStroke][indexSymbol].backgroundColor
                           }
                           style={{
-                            width: 50,
-                            height: 50,
+                            width: 55,
+                            height: 55,
                             borderRadius: 10,
                             overflow: "hidden",
                             justifyContent: "center",

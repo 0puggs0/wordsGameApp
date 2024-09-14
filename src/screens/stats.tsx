@@ -1,6 +1,9 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Storage } from "../utils/storage";
+import { useQuery } from "@tanstack/react-query";
+import { baseUrl } from "../constants/api";
 
 export default function Stats() {
   const [currentWins, setCurrentWins] = useState(0);
@@ -33,6 +36,23 @@ export default function Stats() {
     fetchStorageData();
   }, []);
 
+  const token = Storage.get("token");
+  const { data, error, isPending } = useQuery({
+    queryKey: ["username"],
+    queryFn: async () => {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "",
+      };
+      if (token) {
+        headers.Authorization = token;
+      }
+      const response = await fetch(`${baseUrl}/five_letters/user`, {
+        headers: headers,
+      });
+      return response.json();
+    },
+  });
   const resetStates = () => {
     setCurrentGames(0);
     setBestCurrentStreak(0);
@@ -58,7 +78,7 @@ export default function Stats() {
         <View style={styles.headerContainer}>
           <View style={styles.logo}></View>
           <View>
-            <Text style={styles.nickname}>@puggsMaster</Text>
+            <Text style={styles.nickname}>@{data.username}</Text>
           </View>
         </View>
       </View>
@@ -143,6 +163,7 @@ const styles = StyleSheet.create({
     color: "#CED5DB",
     fontFamily: "Nunito-ExtraBold",
     fontSize: 28,
+    textAlign: "center",
   },
   statsBlock: { gap: 10 },
   buttonsBlock: {
