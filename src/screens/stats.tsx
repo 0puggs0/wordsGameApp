@@ -1,11 +1,23 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Storage } from "../utils/storage";
 import { useQuery } from "@tanstack/react-query";
 import { baseUrl } from "../constants/api";
+import Feather from "@expo/vector-icons/Feather";
+import { StackScreenProps } from "@react-navigation/stack";
+import { RootStackParamList } from "../types/rootStackParamList";
+import { useFocusEffect } from "@react-navigation/native";
 
-export default function Stats() {
+type Props = StackScreenProps<RootStackParamList, "Stats", "MyStack">;
+
+export default function Stats({ navigation }: Props) {
   const [currentWins, setCurrentWins] = useState(0);
   const [currentGames, setCurrentGames] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
@@ -37,7 +49,7 @@ export default function Stats() {
   }, []);
 
   const token = Storage.get("token");
-  const { data, error, isPending } = useQuery({
+  const { data, error, isPending, refetch } = useQuery({
     queryKey: ["username"],
     queryFn: async () => {
       const headers = {
@@ -53,6 +65,11 @@ export default function Stats() {
       return response.json();
     },
   });
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [])
+  );
   const resetStates = () => {
     setCurrentGames(0);
     setBestCurrentStreak(0);
@@ -70,34 +87,69 @@ export default function Stats() {
     },
     { value: currentStreak, title: "Текущ. стрик" },
     { value: bestCurrentStreak, title: "Макс. стрик" },
+    { value: 10, title: "Друзья" },
   ];
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.heading}>Статистика</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={styles.heading}>Профиль</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+            <Feather name="settings" size={29} color="#CED5DB" />
+          </TouchableOpacity>
+        </View>
         <View style={styles.headerContainer}>
           <View style={styles.logo}></View>
           <View>
-            <Text style={styles.nickname}>@{data.username}</Text>
+            {isPending ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={styles.nickname}>@{data?.username}</Text>
+            )}
           </View>
         </View>
       </View>
       <View style={styles.statsBlock}>
-        {statsData.map((item) => {
+        {statsData.map((item, index, arr) => {
           return (
-            <View
-              key={item.title}
-              style={{
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexDirection: "row-reverse",
-              }}
-            >
-              <Text style={styles.textTitle}>{item.value}</Text>
-              <Text style={styles.textValue}>{item.title}</Text>
+            <View style={{}}>
+              <View
+                style={{
+                  width: "100%",
+                  borderWidth: 1,
+                  borderColor: "#272931",
+                }}
+              ></View>
+
+              <View
+                key={item.title}
+                style={{
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexDirection: "row-reverse",
+                  paddingHorizontal: 34,
+                  paddingVertical: 10,
+                }}
+              >
+                <Text style={styles.textTitle}>{item.value}</Text>
+                <Text style={styles.textValue}>{item.title}</Text>
+              </View>
             </View>
           );
         })}
+        <View
+          style={{
+            width: "100%",
+            borderWidth: 1,
+            borderColor: "#272931",
+          }}
+        ></View>
       </View>
       <View style={styles.buttonsBlock}>
         <TouchableOpacity
@@ -119,19 +171,19 @@ export default function Stats() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 100,
+    paddingVertical: 80,
     flex: 1,
     backgroundColor: "#1D1F25",
-    paddingHorizontal: 34,
     gap: 20,
     justifyContent: "space-between",
   },
-  header: { gap: 25 },
+  header: { gap: 25, paddingHorizontal: 34 },
   heading: {
     fontFamily: "Nunito-ExtraBold",
     fontSize: 38,
     color: "#CED5DB",
     textAlign: "center",
+    alignSelf: "center",
   },
   textTitle: {
     color: "#02C39A",
@@ -165,11 +217,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     textAlign: "center",
   },
-  statsBlock: { gap: 10 },
+  statsBlock: {},
   buttonsBlock: {
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 34,
+
     gap: 14,
   },
   button: {

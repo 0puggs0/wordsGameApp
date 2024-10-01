@@ -1,5 +1,5 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
@@ -11,10 +11,10 @@ import { baseUrl } from "../constants/api";
 
 type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
 
-export default function InitialScreen({ navigation, route }: Props) {
+export default function InitialScreen({ navigation }: Props) {
   const token = Storage.get("token");
   const { data, error, isPending } = useQuery({
-    queryKey: ["username"],
+    queryKey: ["user"],
     queryFn: async () => {
       const headers = {
         "Content-Type": "application/json",
@@ -52,20 +52,26 @@ export default function InitialScreen({ navigation, route }: Props) {
       </View>
       <View style={styles.bottomCategories}>
         <View style={styles.bottomCategoriesBlock}>
-          <TouchableOpacity style={styles.leftButton}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Post")}
+            style={styles.leftButton}
+          >
             <Feather name="mail" size={34} color="#1D1F25" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.centerButton}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Stats")}
+            style={styles.centerButton}
+          >
             <Feather name="user" size={40} color="black" />
             <Text numberOfLines={1} style={styles.userHeading}>
               {data?.username}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Stats")}
+            onPress={() => navigation.navigate("Friends")}
             style={styles.leftButton}
           >
-            <Ionicons name="stats-chart" size={30} color="black" />
+            <Feather name="users" size={34} color="black" />
           </TouchableOpacity>
         </View>
         <View style={styles.signOutBlock}>

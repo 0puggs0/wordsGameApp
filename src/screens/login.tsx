@@ -7,14 +7,12 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 type Props = StackScreenProps<RootStackParamList, "Login", "MyStack">;
 
 export default function Login({ navigation }: Props) {
   const [loginValue, setLoginValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
-  const [error, setError] = useState("");
-
   const { isPending, mutate } = useMutation({
     mutationKey: ["login"],
     mutationFn: () => {
@@ -31,6 +29,7 @@ export default function Login({ navigation }: Props) {
         .then((res) => res.json())
         .then((data) => {
           if (data.data.token) {
+            console.log(data.data.token);
             Storage.set("token", data.data.token);
             navigation.navigate("InitialScreen");
           }
@@ -38,7 +37,6 @@ export default function Login({ navigation }: Props) {
         .catch((e) => {
           console.log(e);
           Alert.alert("Ошибка", "Неверный логин или пароль");
-          setError(e);
         });
     },
   });
@@ -92,6 +90,7 @@ export default function Login({ navigation }: Props) {
                 : Alert.alert("Ошибка", "Вы ввели не все данные", [
                     {
                       text: "Закрыть",
+                      style: "cancel",
                     },
                   ])
             }

@@ -4,4 +4,7 @@ export type RootStackParamList = {
   Word: undefined;
   Login: undefined;
   Register: undefined;
+  Post: undefined;
+  Profile: undefined;
+  Friends: undefined;
 };

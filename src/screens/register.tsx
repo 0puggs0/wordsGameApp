@@ -5,7 +5,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 type Props = StackScreenProps<RootStackParamList, "Register", "MyStack">;
 
@@ -33,23 +33,6 @@ export default function Register({ navigation }: Props) {
     },
   });
 
-  // const register = () => {
-  //   setIsLoading(true);
-  //   fetch(`${baseUrl}/five_letters/register`, {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       username: userName,
-  //       email: userEmail,
-  //       password: userPassword,
-  //     }),
-  //     headers: { "Content-Type": "application/json" },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((json) => {
-  //       setIsLoading(false);
-  //       Storage.set("token", json.token);
-  //     });
-  // };
   return (
     <View style={styles.container}>
       <View style={styles.topBlock}>
@@ -103,7 +86,7 @@ export default function Register({ navigation }: Props) {
               userEmail.length && userName.length && userPassword.length
                 ? mutate()
                 : Alert.alert("Ошибка", "Вы ввели не все данные", [
-                    { text: "Закрыть" },
+                    { text: "Закрыть", style: "cancel" },
                   ]);
             }}
             style={styles.topButton}

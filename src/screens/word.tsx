@@ -45,7 +45,6 @@ export default function Word({ navigation }: Props) {
     const response = await fetch(`${baseUrl}/five_letters/words`).then((data) =>
       data.json()
     );
-    console.log(response.word);
     setData(response.word);
   };
 
@@ -202,6 +201,7 @@ export default function Word({ navigation }: Props) {
     }
   };
   const handleCheck = async () => {
+    console.log(data);
     setDisabledButton(true);
 
     const currentWord = [...word];
@@ -222,7 +222,11 @@ export default function Word({ navigation }: Props) {
           setModalVisible(true);
         }
         if (
-          data === currentWord[currentRow].map((item) => item.symbol).join("")
+          data.toLowerCase() ===
+          currentWord[currentRow]
+            .map((item) => item.symbol)
+            .join("")
+            .toLowerCase()
         ) {
           setIsWin(true);
           newCheckObj.forEach((item) => {

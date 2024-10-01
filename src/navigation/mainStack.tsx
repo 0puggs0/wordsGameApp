@@ -5,6 +5,9 @@ import Word from "../screens/word";
 import { RootStackParamList } from "../types/rootStackParamList";
 import Login from "../screens/login";
 import Register from "../screens/register";
+import Post from "../screens/post";
+import Profile from "../screens/profile";
+import Friends from "../screens/friends";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -19,6 +22,22 @@ export function MyStack() {
         name="Login"
         component={Login}
         options={{ gestureEnabled: false }}
+      />
+
+      <Stack.Screen
+        name="Friends"
+        component={Friends}
+        // options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Post"
+        component={Post}
+        // options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        // options={{ gestureEnabled: false }}
       />
       <Stack.Screen
         name="Register"

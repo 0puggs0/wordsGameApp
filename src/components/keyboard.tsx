@@ -1,5 +1,11 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { KeyboardItem } from "../interfaces/wordScreenInterface";
 
 interface Props {
@@ -55,7 +61,20 @@ export function Keyboard(props: Props) {
           onPress={() => props.handleCheck()}
           style={styles.checkButton}
         >
-          <Text style={styles.button}>ПРОВЕРИТЬ СЛОВО</Text>
+          {!props.disabledButton ? (
+            <Text style={styles.button}>ПРОВЕРИТЬ СЛОВО</Text>
+          ) : (
+            <View
+              style={{
+                paddingVertical: 15,
+                paddingHorizontal: 10,
+                backgroundColor: "#48495F",
+                width: "100%",
+              }}
+            >
+              <ActivityIndicator size={"small"} />
+            </View>
+          )}
         </TouchableOpacity>
       </View>
     </View>

@@ -4,6 +4,8 @@ import { useFonts } from "expo-font";
 import { MyStack } from "./src/navigation/mainStack";
 import { NavigationContainer } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const client = new QueryClient();
 export default function App() {
@@ -19,16 +21,20 @@ export default function App() {
     return undefined;
   }
   return (
-    <QueryClientProvider client={client}>
-      <View style={styles.container}>
-        {/* <Word /> */}
-        {/* <Stats /> */}
-        <NavigationContainer>
-          <MyStack />
-        </NavigationContainer>
-        <StatusBar style="light" />
-      </View>
-    </QueryClientProvider>
+    <GestureHandlerRootView>
+      <BottomSheetModalProvider>
+        <QueryClientProvider client={client}>
+          <View style={styles.container}>
+            {/* <Word /> */}
+            {/* <Stats /> */}
+            <NavigationContainer>
+              <MyStack />
+            </NavigationContainer>
+            <StatusBar style="light" />
+          </View>
+        </QueryClientProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 
