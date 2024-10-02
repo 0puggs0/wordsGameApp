@@ -22,6 +22,8 @@ import {
   BottomSheetModal,
 } from "@gorhom/bottom-sheet";
 import { FriendRequestsData } from "../interfaces/getFriendRequests";
+import { FlatList } from "react-native-gesture-handler";
+import ModalWindowDeleteFriend from "../components/modalWindowDeleteFriend";
 
 type Props = StackScreenProps<RootStackParamList, "Friends", "MyStack">;
 
@@ -40,6 +42,9 @@ export default function Friends({ navigation }: Props) {
   );
 
   const [inputValue, setInputValue] = useState("");
+  const [isLongPress, setLongPress] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState("");
 
   const friendRequests = useQuery<FriendRequestsData>({
     queryKey: ["friends"],
@@ -96,8 +101,35 @@ export default function Friends({ navigation }: Props) {
         headers: headers,
       }
     );
+
     console.log(await response.json());
+    friendRequests.refetch();
+    if (action === "approve") {
+      friends.refetch();
+    }
   };
+
+  const removeFriend = async (id: string) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "",
+    };
+    if (token) {
+      headers.Authorization = token;
+    }
+    const response = await fetch(
+      `${baseUrl}/five_letters/remove-friend/${id}`,
+      {
+        method: "POST",
+        body: "",
+        headers: headers,
+      }
+    );
+    console.log(await response.json());
+    friends.refetch();
+    setModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -126,7 +158,7 @@ export default function Friends({ navigation }: Props) {
               fontSize: 20,
             }}
           >
-            10 друзей
+            {friends?.data?.friends.length} друзей
           </Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate("Stats")}>
@@ -158,11 +190,12 @@ export default function Friends({ navigation }: Props) {
           fontSize: 15,
         }}
       />
-      <ScrollView style={{ width: "100%", paddingVertical: 20 }}>
+      {/* <ScrollView style={{ width: "100%", paddingVertical: 20 }}>
         {friends.data?.friends?.map((item) => {
           if (item.username.toLowerCase().includes(inputValue.toLowerCase())) {
             return (
               <View
+                onTouchStart={() => removeFriend(item.id)}
                 style={{
                   width: "100%",
                   flexDirection: "row",
@@ -192,7 +225,85 @@ export default function Friends({ navigation }: Props) {
             );
           }
         })}
-      </ScrollView>
+      </ScrollView> */}
+      <FlatList
+        style={{ width: "100%" }}
+        data={friends?.data?.friends}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingVertical: 20 }}
+        renderItem={({ item }) => {
+          if (item.username.toLowerCase().includes(inputValue.toLowerCase())) {
+            return (
+              <TouchableOpacity
+                onLongPress={() =>
+                  isLongPress ? setLongPress(false) : setLongPress(true)
+                }
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 10,
+                  marginTop: 10,
+                  borderWidth: 0.3,
+                  borderColor: "#6F7276",
+                  borderRadius: 20,
+                  padding: 13,
+                  justifyContent: "space-between",
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+
+                    gap: 13,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 50,
+                      height: 50,
+                      backgroundColor: "grey",
+                      borderRadius: 25,
+                    }}
+                  ></View>
+                  <Text
+                    style={{
+                      fontFamily: "Nunito-Regular",
+                      fontSize: 20,
+                      color: "white",
+                    }}
+                  >
+                    {item.username}
+                  </Text>
+                </View>
+                {isLongPress && (
+                  // onPress={() => removeFriend(item.id)
+                  <TouchableOpacity
+                    onPress={() => {
+                      setCurrentUserId(item.id);
+                      setModalVisible(true);
+                    }}
+                  >
+                    <AntDesign
+                      style={{
+                        padding: 3,
+                        backgroundColor: "#fc4949",
+                        borderRadius: 8,
+                        overflow: "hidden",
+                      }}
+                      name="close"
+                      size={24}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                )}
+              </TouchableOpacity>
+            );
+          }
+          return null;
+        }}
+      ></FlatList>
       <View style={{ gap: 10, width: "100%" }}>
         <TouchableOpacity style={{}}>
           <Text
@@ -253,7 +364,7 @@ export default function Friends({ navigation }: Props) {
           backgroundColor: "white",
           paddingHorizontal: 20,
         }}
-        snapPoints={["25%", "50%", "85%"]}
+        snapPoints={["50%", "85%"]}
         backgroundStyle={{ backgroundColor: "#1D1F25" }}
       >
         <Text
@@ -333,9 +444,9 @@ export default function Friends({ navigation }: Props) {
                   }}
                 >
                   <TouchableOpacity
-                    onPress={() =>
-                      fetchAcceptRequest("rl0vl9w0rs06p4h", "approve")
-                    }
+                    onPress={() => {
+                      fetchAcceptRequest(item.id, "approve");
+                    }}
                   >
                     <AntDesign
                       style={{
@@ -349,7 +460,9 @@ export default function Friends({ navigation }: Props) {
                       color="white"
                     />
                   </TouchableOpacity>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => fetchAcceptRequest(item.id, "reject")}
+                  >
                     <AntDesign
                       style={{
                         padding: 5,
@@ -368,6 +481,12 @@ export default function Friends({ navigation }: Props) {
           }}
         />
       </BottomSheetModal>
+      <ModalWindowDeleteFriend
+        modalVisible={modalVisible}
+        onDelete={(id) => removeFriend(id)}
+        setModalVisible={(bool) => setModalVisible(bool)}
+        currentUserId={currentUserId}
+      ></ModalWindowDeleteFriend>
     </View>
   );
 }
