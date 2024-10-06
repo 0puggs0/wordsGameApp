@@ -17,5 +17,3 @@ export interface Stat {
   id: string;
   isWin: boolean;
 }
-
-//

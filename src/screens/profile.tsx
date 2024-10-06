@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
 import { baseUrl } from "../constants/api";
+import { UserData } from "../interfaces/getUser";
 
 export default function Profile() {
   const [loginValue, setLoginValue] = useState("");
@@ -16,7 +17,7 @@ export default function Profile() {
 
   const token = Storage.get("token");
 
-  const { data, error, isPending, refetch } = useQuery({
+  const { data, error, isPending, refetch } = useQuery<UserData>({
     queryKey: ["username"],
     queryFn: async () => {
       const headers = {

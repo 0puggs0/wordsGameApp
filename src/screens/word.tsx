@@ -7,13 +7,14 @@ import { checkString } from "../utils/checkString";
 import ModalWindow from "../components/modalWindow";
 import { getWords } from "../constants/wordArray";
 import { getKeyboard } from "../constants/keyboardArray";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
+import { Storage } from "../utils/storage";
 
 type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
 export default function Word({ navigation }: Props) {
+  const token = Storage.get("token");
   const [isError, setIsError] = useState(false);
   const [errorType, setErrorType] = useState("");
   const [isWin, setIsWin] = useState(false);
@@ -29,7 +30,6 @@ export default function Word({ navigation }: Props) {
   useEffect(() => {
     getData();
   }, []);
-
   const colorMap = {
     green: ["#02C39A", "#189D7C"],
     borderGreen: ["#189D7C", "#02C39A"],
@@ -40,120 +40,56 @@ export default function Word({ navigation }: Props) {
     greenText: "#1D6B55",
     yellowText: "#837035",
   };
-
   const getData = async () => {
     const response = await fetch(`${baseUrl}/five_letters/words`).then((data) =>
       data.json()
     );
     setData(response.word);
   };
-
-  const modalNext = async () => {
-    const currentPlayed = await AsyncStorage.getItem("played");
-    if (currentPlayed === null) {
-      await AsyncStorage.setItem("played", "1");
-    } else {
-      const intPlayed = parseInt(currentPlayed);
-      await AsyncStorage.setItem("played", (intPlayed + 1).toString());
+  const postStats = async (isWin: boolean, word: string) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "",
+    };
+    if (token) {
+      headers.Authorization = token;
     }
+    const response = await fetch(`${baseUrl}/five_letters/finish`, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ isWin: isWin, answer: word }),
+    });
+    console.log(await response.json());
+  };
+  const modalNext = async () => {
     if (isWin) {
-      const currentWins = await AsyncStorage.getItem("wins");
-      const currentStreak = await AsyncStorage.getItem("currentStreak");
-      const bestStreak = await AsyncStorage.getItem("bestStreak");
-      if (currentWins === null) {
-        await AsyncStorage.setItem("wins", "1");
-      } else {
-        const intWins = parseInt(currentWins);
-        await AsyncStorage.setItem("wins", (intWins + 1).toString());
-      }
-      if (currentStreak === null) {
-        await AsyncStorage.setItem("currentStreak", "1");
-      } else {
-        const intCurrentStreak = parseInt(currentStreak);
-        await AsyncStorage.setItem(
-          "currentStreak",
-          (intCurrentStreak + 1).toString()
-        );
-      }
-      if (bestStreak === null) {
-        await AsyncStorage.setItem("bestStreak", "1");
-      } else {
-        if (currentStreak !== null) {
-          if (parseInt(bestStreak) + 1 <= parseInt(currentStreak) + 1) {
-            await AsyncStorage.setItem(
-              "bestStreak",
-              (parseInt(currentStreak) + 1).toString()
-            );
-          }
-        }
-      }
+      postStats(true, data);
     } else {
-      await AsyncStorage.setItem("currentStreak", "0");
+      postStats(false, data);
     }
     getData();
     resetStates();
   };
-
   const modalExit = async () => {
-    const currentPlayed = await AsyncStorage.getItem("played");
-    if (currentPlayed === null) {
-      await AsyncStorage.setItem("played", "1");
-    } else {
-      const intPlayed = parseInt(currentPlayed);
-      await AsyncStorage.setItem("played", (intPlayed + 1).toString());
-    }
     if (isWin) {
-      const currentWins = await AsyncStorage.getItem("wins");
-      const currentStreak = await AsyncStorage.getItem("currentStreak");
-      const bestStreak = await AsyncStorage.getItem("bestStreak");
-      if (currentWins === null) {
-        await AsyncStorage.setItem("wins", "1");
-      } else {
-        const intWins = parseInt(currentWins);
-        await AsyncStorage.setItem("wins", (intWins + 1).toString());
-      }
-      if (currentStreak === null) {
-        await AsyncStorage.setItem("currentStreak", "1");
-      } else {
-        const intCurrentStreak = parseInt(currentStreak);
-        await AsyncStorage.setItem(
-          "currentStreak",
-          (intCurrentStreak + 1).toString()
-        );
-      }
-      if (bestStreak === null) {
-        await AsyncStorage.setItem("bestStreak", "1");
-      } else {
-        if (currentStreak !== null) {
-          if (parseInt(bestStreak) + 1 <= parseInt(currentStreak) + 1) {
-            await AsyncStorage.setItem(
-              "bestStreak",
-              (parseInt(currentStreak) + 1).toString()
-            );
-          }
-        }
-      }
+      postStats(true, data);
     } else {
-      await AsyncStorage.setItem("currentStreak", "0");
+      postStats(false, data);
     }
-
     setIsWin(false);
     setModalVisible(false);
     setWord(getWords());
     setRussianKeyboardData(getKeyboard());
     setCurrentColumn(0);
     setCurrentRow(0);
-
     navigation.navigate("InitialScreen");
   };
-
   const checkWordInData = async (input: string) => {
     const response = await fetch(
       `${baseUrl}/five_letters/checkWord/${input}`
     ).then((data) => data.json());
     return response.message;
   };
-
   const resetStates = () => {
     setModalVisible(false);
     setTimeout(() => {
@@ -164,7 +100,6 @@ export default function Word({ navigation }: Props) {
       setCurrentRow(0);
     }, 100);
   };
-
   const showErrorWordLengthModal = () => {
     setIsError(true);
     setErrorType("wordLength");
@@ -177,7 +112,6 @@ export default function Word({ navigation }: Props) {
       }, 300);
     }, 1500);
   };
-
   const showErrorCorrectWordModal = () => {
     setIsError(true);
     setErrorType("correctWord");
@@ -190,10 +124,8 @@ export default function Word({ navigation }: Props) {
       }, 300);
     }, 1500);
   };
-
   const handleInput = (symbol: string) => {
     const currentWord = [...word];
-
     if (currentColumn <= 4) {
       currentWord[currentRow][currentColumn].symbol = symbol;
       setCurrentColumn((prev) => prev + 1);
@@ -203,7 +135,6 @@ export default function Word({ navigation }: Props) {
   const handleCheck = async () => {
     console.log(data);
     setDisabledButton(true);
-
     const currentWord = [...word];
     if (currentColumn > 4) {
       if (
@@ -281,7 +212,6 @@ export default function Word({ navigation }: Props) {
       showErrorWordLengthModal();
     }
     setDisabledButton(false);
-    // console.log(data);
   };
   const handleClear = () => {
     const currentWord = [...word];
@@ -304,13 +234,7 @@ export default function Word({ navigation }: Props) {
                   return (
                     <View key={indexSymbol}>
                       <LinearGradient
-                        style={{
-                          width: 65,
-                          height: 65,
-                          borderRadius: 15,
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
+                        style={styles.symbolBorderContainer}
                         colors={
                           word[indexStroke][indexSymbol].borderBackgroundColor
                         }
@@ -319,14 +243,7 @@ export default function Word({ navigation }: Props) {
                           colors={
                             word[indexStroke][indexSymbol].backgroundColor
                           }
-                          style={{
-                            width: 55,
-                            height: 55,
-                            borderRadius: 10,
-                            overflow: "hidden",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
+                          style={styles.symbolInnerContainer}
                         >
                           <Text
                             style={{
@@ -403,5 +320,20 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Bold",
     color: "#A3A3AE",
     fontSize: 30,
+  },
+  symbolBorderContainer: {
+    width: 65,
+    height: 65,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  symbolInnerContainer: {
+    width: 55,
+    height: 55,
+    borderRadius: 10,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

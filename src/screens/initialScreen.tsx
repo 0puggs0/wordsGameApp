@@ -4,16 +4,16 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import Feather from "@expo/vector-icons/Feather";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
 import { baseUrl } from "../constants/api";
+import { UserData } from "../interfaces/getUser";
 
 type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
 
 export default function InitialScreen({ navigation }: Props) {
   const token = Storage.get("token");
-  const { data, error, isPending } = useQuery({
+  const { data, error, isPending } = useQuery<UserData>({
     queryKey: ["user"],
     queryFn: async () => {
       const headers = {
