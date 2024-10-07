@@ -102,23 +102,6 @@ export default function Friends({ navigation }: Props) {
       return response.json();
     },
   });
-  const getUserStats = async (userId: string) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "",
-    };
-    if (token) {
-      headers.Authorization = token;
-    }
-    const response = await fetch(
-      `${baseUrl}/five_letters/user-stats/${userId}`,
-      {
-        headers: headers,
-      }
-    );
-    console.log(await response.json());
-    return response.json();
-  };
 
   const fetchAcceptRequest = async (
     id: string,
@@ -220,6 +203,18 @@ export default function Friends({ navigation }: Props) {
                 exiting={ZoomOut.springify().stiffness(200).damping(80)}
               >
                 <TouchableOpacity
+                  onPress={async () => {
+                    try {
+                      navigation.navigate("Stats", {
+                        userId: item.id,
+                        userFriends: 0,
+                        userName: item.username,
+                      });
+                      bottomSheetRef?.current?.dismiss();
+                    } catch (error) {
+                      console.error("Error fetching user stats:", error);
+                    }
+                  }}
                   onLongPress={() =>
                     isLongPress ? setLongPress(false) : setLongPress(true)
                   }
@@ -412,11 +407,25 @@ export default function Friends({ navigation }: Props) {
                 if (
                   item.username
                     .toLowerCase()
-                    .includes(searchInputValue.toLowerCase())
+                    .includes(searchInputValue.toLowerCase()) &&
+                  !friends?.data?.friends
+                    .map((item) => item.id)
+                    .includes(item.id)
                 ) {
                   return (
                     <TouchableOpacity
-                      onPress={() => navigation.navigate("Stats")}
+                      onPress={async () => {
+                        try {
+                          navigation.navigate("Stats", {
+                            userId: item.id,
+                            userFriends: item?.friends,
+                            userName: item.username,
+                          });
+                          bottomSheetRef?.current?.dismiss();
+                        } catch (error) {
+                          console.error("Error fetching user stats:", error);
+                        }
+                      }}
                       style={{
                         width: "100%",
                         flexDirection: "row",

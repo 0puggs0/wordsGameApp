@@ -1,7 +1,7 @@
 export interface UserData {
   friends: Array<Friend>;
   id: string;
-  stats: Array<Stat>;
+  stats: Stat;
   token: string;
   username: string;
 }
@@ -12,8 +12,8 @@ export interface Friend {
 }
 
 export interface Stat {
-  answer: string;
-  date: string;
-  id: string;
-  isWin: boolean;
+  currentStreak: number;
+  games: number;
+  maxStreak: number;
+  percentOfWins: number;
 }

@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Storage } from "../utils/storage";
 import { useQuery } from "@tanstack/react-query";
 import { baseUrl } from "../constants/api";
@@ -14,11 +14,27 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { useFocusEffect } from "@react-navigation/native";
 import { UserData } from "../interfaces/getUser";
-import { calculateStats } from "../utils/calculateStats";
+
+interface UserStats {
+  message: UserStat;
+}
+interface UserStat {
+  currentStreak: number;
+  games: number;
+  maxStreak: number;
+  percentOfWins: number;
+}
 
 type Props = StackScreenProps<RootStackParamList, "Stats", "MyStack">;
 
-export default function Stats({ navigation }: Props) {
+export default function Stats({ navigation, route }: Props) {
+  const userId = route?.params?.userId;
+  const userName = route?.params?.userName;
+  const userFriends = route?.params?.userFriends;
+  const [userData, setUserData] = useState<UserStats>({
+    message: { currentStreak: 0, games: 0, maxStreak: 0, percentOfWins: 0 },
+  });
+
   const token = Storage.get("token");
   const { data, error, isPending, refetch } = useQuery<UserData>({
     queryKey: ["username"],
@@ -43,15 +59,63 @@ export default function Stats({ navigation }: Props) {
     }, [])
   );
 
+  useEffect(() => {
+    const getStats = async () => {
+      if (userId) {
+        const response = await getUserStats(userId);
+        setUserData(response);
+      }
+    };
+    getStats();
+  }, []);
+
+  const getUserStats = async (userId: string) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "",
+    };
+    if (token) {
+      headers.Authorization = token;
+    }
+    const response = await fetch(
+      `${baseUrl}/five_letters/user-stats/${userId}`,
+      {
+        headers: headers,
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  };
+
   const statsData = [
-    { value: data?.stats.length, title: "Игр" },
+    { value: data?.stats?.games, title: "Игр" },
     {
-      value: calculateStats(data)?.percentOfWins.toFixed(1),
+      value: data?.stats?.percentOfWins.toFixed(1),
       title: "Побед %",
     },
-    { value: calculateStats(data)?.currentStreak, title: "Текущ. стрик" },
-    { value: calculateStats(data)?.maxStreak, title: "Макс. стрик" },
+    { value: data?.stats?.currentStreak, title: "Текущ. стрик" },
+    { value: data?.stats?.maxStreak, title: "Макс. стрик" },
     { value: data?.friends.length, title: "Друзья" },
+  ];
+  const userStatsData = [
+    {
+      value: userId !== undefined && userData?.message?.games,
+      title: "Игр",
+    },
+    {
+      value: userId !== undefined && userData.message?.percentOfWins.toFixed(1),
+      title: "Побед %",
+    },
+    {
+      value: userId !== undefined && userData?.message?.currentStreak,
+      title: "Текущ. стрик",
+    },
+    {
+      value: userId !== undefined && userData?.message?.maxStreak,
+      title: "Макс. стрик",
+    },
+    { value: userFriends, title: "Друзья" },
   ];
   return (
     <View style={styles.container}>
@@ -68,24 +132,39 @@ export default function Stats({ navigation }: Props) {
             {isPending ? (
               <ActivityIndicator />
             ) : (
-              <Text style={styles.nickname}>@{data?.username}</Text>
+              <Text style={styles.nickname}>
+                @{userName === undefined ? data?.username : userName}
+              </Text>
             )}
           </View>
         </View>
       </View>
       <View style={styles.statsBlock}>
-        {statsData.map((item) => {
-          return (
-            <View>
-              <View style={styles.border}></View>
+        {userId === undefined
+          ? statsData.map((item) => {
+              return (
+                <View>
+                  <View style={styles.border}></View>
 
-              <View key={item.title} style={styles.statsRow}>
-                <Text style={styles.textTitle}>{item.value}</Text>
-                <Text style={styles.textValue}>{item.title}</Text>
-              </View>
-            </View>
-          );
-        })}
+                  <View key={item.title} style={styles.statsRow}>
+                    <Text style={styles.textTitle}>{item.value}</Text>
+                    <Text style={styles.textValue}>{item.title}</Text>
+                  </View>
+                </View>
+              );
+            })
+          : userStatsData.map((item) => {
+              return (
+                <View>
+                  <View style={styles.border}></View>
+
+                  <View key={item.title} style={styles.statsRow}>
+                    <Text style={styles.textTitle}>{item.value}</Text>
+                    <Text style={styles.textValue}>{item.title}</Text>
+                  </View>
+                </View>
+              );
+            })}
         <View style={styles.border}></View>
       </View>
       <View style={styles.buttonsBlock}>

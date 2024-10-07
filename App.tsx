@@ -25,8 +25,6 @@ export default function App() {
       <BottomSheetModalProvider>
         <QueryClientProvider client={client}>
           <View style={styles.container}>
-            {/* <Word /> */}
-            {/* <Stats /> */}
             <NavigationContainer>
               <MyStack />
             </NavigationContainer>
@@ -41,7 +39,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: "#1D1F25",
   },
 });
