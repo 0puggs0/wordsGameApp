@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -20,6 +21,7 @@ interface UserStats {
 }
 interface UserStat {
   currentStreak: number;
+  friends: Array<{ id: string; username: string }>;
   games: number;
   maxStreak: number;
   percentOfWins: number;
@@ -32,9 +34,14 @@ export default function Stats({ navigation, route }: Props) {
   const userName = route?.params?.userName;
   const userFriends = route?.params?.userFriends;
   const [userData, setUserData] = useState<UserStats>({
-    message: { currentStreak: 0, games: 0, maxStreak: 0, percentOfWins: 0 },
+    message: {
+      currentStreak: 0,
+      games: 0,
+      maxStreak: 0,
+      percentOfWins: 0,
+      friends: [{ id: "", username: "" }],
+    },
   });
-
   const token = Storage.get("token");
   const { data, error, isPending, refetch } = useQuery<UserData>({
     queryKey: ["username"],
@@ -87,6 +94,25 @@ export default function Stats({ navigation, route }: Props) {
     const data = await response.json();
     return data;
   };
+  const addFriend = async (id: string) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "",
+    };
+    if (token) {
+      headers.Authorization = token;
+    }
+    const response = await fetch(`${baseUrl}/five_letters/add-friend`, {
+      method: "POST",
+      body: JSON.stringify({
+        userId: id,
+      }),
+      headers: headers,
+    });
+    if (response.ok) {
+      Alert.alert("Заявка отправлена", "");
+    }
+  };
 
   const statsData = [
     { value: data?.stats?.games, title: "Игр" },
@@ -96,7 +122,7 @@ export default function Stats({ navigation, route }: Props) {
     },
     { value: data?.stats?.currentStreak, title: "Текущ. стрик" },
     { value: data?.stats?.maxStreak, title: "Макс. стрик" },
-    { value: data?.friends.length, title: "Друзья" },
+    { value: data?.friends?.length, title: "Друзья" },
   ];
   const userStatsData = [
     {
@@ -115,16 +141,18 @@ export default function Stats({ navigation, route }: Props) {
       value: userId !== undefined && userData?.message?.maxStreak,
       title: "Макс. стрик",
     },
-    { value: userFriends, title: "Друзья" },
+    { value: userData?.message?.friends.length, title: "Друзья" },
   ];
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerBlock}>
           <Text style={styles.heading}>Профиль</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-            <Feather name="settings" size={29} color="#CED5DB" />
-          </TouchableOpacity>
+          {userId === undefined && (
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+              <Feather name="settings" size={29} color="#CED5DB" />
+            </TouchableOpacity>
+          )}
         </View>
         <View style={styles.headerContainer}>
           <View style={styles.logo}></View>
@@ -139,7 +167,7 @@ export default function Stats({ navigation, route }: Props) {
           </View>
         </View>
       </View>
-      <View style={styles.statsBlock}>
+      <View>
         {userId === undefined
           ? statsData.map((item) => {
               return (
@@ -168,12 +196,45 @@ export default function Stats({ navigation, route }: Props) {
         <View style={styles.border}></View>
       </View>
       <View style={styles.buttonsBlock}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.textButton}>Сбросить статистику</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.textButton}>Таблица лидеров</Text>
-        </TouchableOpacity>
+        {userId === undefined && (
+          <>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.textButton}>Сбросить статистику</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.textButton}>Таблица лидеров</Text>
+            </TouchableOpacity>
+          </>
+        )}
+        {userId !== undefined &&
+          data?.friends?.map((item) => item.id).includes(userId) && (
+            <>
+              <TouchableOpacity
+                onPress={() =>
+                  userName !== undefined &&
+                  navigation.navigate("Post", {
+                    username: userName,
+                    userId: userId,
+                  })
+                }
+                style={styles.button}
+              >
+                <Text style={styles.textButton}>Отправить сообщение</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button}>
+                <Text style={styles.textButton}>Удалить из друзей</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        {userId !== undefined &&
+          !data?.friends?.map((item) => item.id).includes(userId) && (
+            <TouchableOpacity
+              onPress={() => addFriend(userId)}
+              style={styles.button}
+            >
+              <Text style={styles.textButton}>Добавить в друзья</Text>
+            </TouchableOpacity>
+          )}
       </View>
     </View>
   );
@@ -189,7 +250,7 @@ const styles = StyleSheet.create({
   },
   header: { gap: 25, paddingHorizontal: 34 },
   heading: {
-    fontFamily: "Nunito-ExtraBold",
+    fontFamily: "Nunito-SemiBold",
     fontSize: 38,
     color: "#CED5DB",
     textAlign: "center",
@@ -198,14 +259,14 @@ const styles = StyleSheet.create({
   textTitle: {
     color: "#02C39A",
     textAlign: "right",
-    fontFamily: "Nunito-Bold",
+    fontFamily: "Nunito-Regular",
     fontSize: 32,
     width: 170,
   },
   textValue: {
     color: "#CED5DB",
     textAlign: "left",
-    fontFamily: "Nunito-Bold",
+    fontFamily: "Nunito-Medium",
     fontSize: 24,
   },
   headerContainer: {
@@ -223,7 +284,7 @@ const styles = StyleSheet.create({
   },
   nickname: {
     color: "#CED5DB",
-    fontFamily: "Nunito-ExtraBold",
+    fontFamily: "Nunito-SemiBold",
     fontSize: 28,
     textAlign: "center",
   },

@@ -58,7 +58,7 @@ export default function Message(props: Props) {
           >
             {props.message}
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={props.button}>
             <MaterialIcons
               style={{
                 padding: 6,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "360034523548",
+    "project_id": "catch-word-61f66",
+    "storage_bucket": "catch-word-61f66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:360034523548:android:934ec79fbb2b9e1fdd1059",
+        "android_client_info": {
+          "package_name": "com.puggs.wordsGameApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5KVHBNxDiLw0DDojlVeN7qXLjkufgLcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,6 +14,7 @@ import { baseUrl } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   BottomSheetBackdrop,
@@ -224,7 +225,7 @@ export default function Friends({ navigation }: Props) {
                     <View style={styles.friendLogo}></View>
                     <Text style={styles.friendNameText}>{item.username}</Text>
                   </View>
-                  {isLongPress && (
+                  {isLongPress ? (
                     <TouchableOpacity
                       onPress={() => {
                         setCurrentUserId(item.id);
@@ -235,6 +236,21 @@ export default function Friends({ navigation }: Props) {
                         style={styles.closeButton}
                         name="close"
                         size={24}
+                        color="white"
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("Post", {
+                          username: item.username,
+                          userId: item.id,
+                        })
+                      }
+                    >
+                      <MaterialCommunityIcons
+                        name="message-text-outline"
+                        size={27}
                         color="white"
                       />
                     </TouchableOpacity>
@@ -576,6 +592,12 @@ const styles = StyleSheet.create({
   closeButton: {
     padding: 3,
     backgroundColor: "#fc4949",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  chatButton: {
+    padding: 5,
+    backgroundColor: "#02C39A",
     borderRadius: 8,
     overflow: "hidden",
   },
