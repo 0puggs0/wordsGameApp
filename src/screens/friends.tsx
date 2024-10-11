@@ -15,6 +15,7 @@ import { UserData } from "../interfaces/getUser";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   BottomSheetBackdrop,
@@ -248,11 +249,7 @@ export default function Friends({ navigation }: Props) {
                         })
                       }
                     >
-                      <MaterialCommunityIcons
-                        name="message-text-outline"
-                        size={27}
-                        color="white"
-                      />
+                      <Feather name="mail" size={27} color="white" />
                     </TouchableOpacity>
                   )}
                 </TouchableOpacity>
@@ -569,7 +566,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: "#6F7276",
     borderRadius: 20,
-    padding: 13,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     justifyContent: "space-between",
   },
   friendCardContent: {

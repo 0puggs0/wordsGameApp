@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   },
   header: { gap: 25, paddingHorizontal: 34 },
   heading: {
-    fontFamily: "Nunito-SemiBold",
+    fontFamily: "Nunito-Bold",
     fontSize: 38,
     color: "#CED5DB",
     textAlign: "center",
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   textValue: {
     color: "#CED5DB",
     textAlign: "left",
-    fontFamily: "Nunito-Medium",
+    fontFamily: "Nunito-Bold",
     fontSize: 24,
   },
   headerContainer: {
