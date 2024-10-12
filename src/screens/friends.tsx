@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Keyboard,
 } from "react-native";
 import React, { useCallback, useRef, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -173,7 +174,7 @@ export default function Friends({ navigation }: Props) {
   };
 
   return (
-    <View style={styles.container}>
+    <View onTouchStart={Keyboard.dismiss} style={styles.container}>
       <View style={styles.topBlock}>
         <View>
           <Text style={styles.headerText}>Друзья</Text>
@@ -192,6 +193,7 @@ export default function Friends({ navigation }: Props) {
         value={inputValue}
         onChangeText={(value) => setInputValue(value)}
         style={styles.friendsInput}
+        keyboardAppearance="dark"
       />
       <FlatList
         style={{ width: "100%" }}

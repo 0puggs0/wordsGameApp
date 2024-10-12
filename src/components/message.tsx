@@ -9,6 +9,7 @@ interface Props {
   time: string;
   message: string;
   button: () => void;
+  isSender: boolean;
 }
 
 export default function Message(props: Props) {
@@ -24,7 +25,13 @@ export default function Message(props: Props) {
       >
         {props.date}
       </Text>
-      <View style={styles.messageContainer}>
+      <View
+        style={
+          !props.isSender
+            ? styles.messageContainer
+            : styles.messageContainerReverse
+        }
+      >
         <View style={{ gap: 5 }}>
           <View style={styles.logo}></View>
           <Text
@@ -42,6 +49,7 @@ export default function Message(props: Props) {
           style={{
             flexDirection: "row",
             alignItems: "center",
+            justifyContent: "space-between",
             paddingHorizontal: 22,
             paddingVertical: 14,
             backgroundColor: "#CED5DB",
@@ -54,23 +62,26 @@ export default function Message(props: Props) {
               fontFamily: "Nunito-SemiBold",
               fontSize: 20,
               color: "#1D1F25",
+              maxWidth: 220,
             }}
           >
             {props.message}
           </Text>
-          <TouchableOpacity onPress={props.button}>
-            <MaterialIcons
-              style={{
-                padding: 6,
-                backgroundColor: "#02C39A",
-                borderRadius: 8,
-                overflow: "hidden",
-              }}
-              name="done"
-              size={24}
-              color="black"
-            />
-          </TouchableOpacity>
+          {!props.isSender && (
+            <TouchableOpacity onPress={props.button}>
+              <MaterialIcons
+                style={{
+                  padding: 6,
+                  backgroundColor: "#02C39A",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                }}
+                name="done"
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
@@ -88,6 +99,11 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  messageContainerReverse: {
+    flexDirection: "row-reverse",
     alignItems: "center",
     justifyContent: "space-between",
   },

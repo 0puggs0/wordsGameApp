@@ -1,4 +1,12 @@
-import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -43,18 +51,18 @@ export default function Login({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBlock}>
-        <View style={styles.heading}>
-          <Text style={styles.headingFirst}>Catch</Text>
-          <Text style={styles.headingSecond}>Word</Text>
-        </View>
-        <View style={styles.title}>
-          <Text style={styles.titleFirstText}>С возвращением!</Text>
-          <Text style={styles.titleSecondText}>
-            Пожалуйста войдите в ваш аккаунт
-          </Text>
-        </View>
+      <View style={styles.heading}>
+        <Text style={styles.headingFirst}>Catch</Text>
+        <Text style={styles.headingSecond}>Word</Text>
       </View>
+
+      <View style={styles.title}>
+        <Text style={styles.titleFirstText}>С возвращением!</Text>
+        <Text style={styles.titleSecondText}>
+          Пожалуйста войдите в ваш аккаунт
+        </Text>
+      </View>
+
       <View style={styles.centerBlock}>
         <View style={styles.inputBlock}>
           <TextInput
@@ -65,11 +73,13 @@ export default function Login({ navigation }: Props) {
             value={loginValue}
             onChangeText={(value) => setLoginValue(value)}
             autoCapitalize="none"
+            keyboardAppearance="dark"
           ></TextInput>
           <TextInput
             placeholderTextColor={"#484B55"}
             placeholder="Пароль"
             secureTextEntry={true}
+            keyboardAppearance="dark"
             selectionColor={"#02C39A"}
             style={styles.textInput}
             value={passwordValue}
