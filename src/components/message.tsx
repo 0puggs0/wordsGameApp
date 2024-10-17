@@ -7,9 +7,12 @@ interface Props {
   logo: string;
   date: string;
   time: string;
+  sender: string;
   message: string;
+  word: string;
   button: () => void;
   isSender: boolean;
+  status: string;
 }
 
 export default function Message(props: Props) {
@@ -49,25 +52,49 @@ export default function Message(props: Props) {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between",
+            gap:
+              props.status !== "pending" ||
+              (props.status === "pending" && props.isSender)
+                ? 0
+                : 10,
             paddingHorizontal: 22,
             paddingVertical: 14,
             backgroundColor: "#CED5DB",
             borderRadius: 13,
-            gap: 10,
           }}
         >
           <Text
             style={{
-              fontFamily: "Nunito-SemiBold",
-              fontSize: 20,
+              fontFamily: "Nunito-Regular",
+              fontSize: 16,
               color: "#1D1F25",
-              maxWidth: 220,
             }}
           >
             {props.message}
           </Text>
-          {!props.isSender && (
+          {props.status !== "pending" && (
+            <Text
+              style={{
+                fontFamily: "Nunito-Bold",
+                fontSize: 16,
+                color: "#1D1F25",
+              }}
+            >
+              {props.word.toUpperCase()}
+            </Text>
+          )}
+          {props.status === "pending" && props.isSender && (
+            <Text
+              style={{
+                fontFamily: "Nunito-Bold",
+                fontSize: 16,
+                color: "#1D1F25",
+              }}
+            >
+              {props.word.toUpperCase()}
+            </Text>
+          )}
+          {!props.isSender && props.status === "pending" && (
             <TouchableOpacity onPress={props.button}>
               <MaterialIcons
                 style={{
@@ -90,21 +117,23 @@ export default function Message(props: Props) {
 
 const styles = StyleSheet.create({
   logo: {
-    width: 66,
-    height: 66,
+    width: 46,
+    height: 46,
     backgroundColor: "#CED5DB",
     borderRadius: 32,
     borderColor: "#02C39A",
-    borderWidth: 6,
+    borderWidth: 4,
   },
   messageContainer: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: 15,
   },
   messageContainerReverse: {
     flexDirection: "row-reverse",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: 15,
+    width: "100%",
   },
 });

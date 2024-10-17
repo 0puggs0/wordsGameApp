@@ -39,6 +39,7 @@ export default function Login({ navigation }: Props) {
           if (data.data.token) {
             console.log(data.data.token);
             Storage.set("token", data.data.token);
+
             navigation.navigate("InitialScreen");
           }
         })

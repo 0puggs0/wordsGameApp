@@ -45,7 +45,7 @@ export default function InitialScreen({ navigation }: Props) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.friendButton}
-          onPress={() => navigation.navigate("Stats")}
+          onPress={() => navigation.navigate("Friends")}
         >
           <Text style={styles.friendButtonText}>Слово для друга</Text>
         </TouchableOpacity>
@@ -53,10 +53,10 @@ export default function InitialScreen({ navigation }: Props) {
       <View style={styles.bottomCategories}>
         <View style={styles.bottomCategoriesBlock}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Post")}
+            onPress={() => navigation.navigate("Profile")}
             style={styles.leftButton}
           >
-            <Feather name="mail" size={34} color="#1D1F25" />
+            <Feather name="settings" size={33} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("Stats")}

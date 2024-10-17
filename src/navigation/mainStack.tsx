@@ -8,6 +8,7 @@ import Register from "../screens/register";
 import Post from "../screens/post";
 import Profile from "../screens/profile";
 import Friends from "../screens/friends";
+import Splash from "../screens/splash";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -18,6 +19,11 @@ export function MyStack() {
         headerShown: false,
       }}
     >
+      <Stack.Screen
+        name="Splash"
+        component={Splash}
+        options={{ gestureEnabled: false }}
+      />
       <Stack.Screen
         name="Login"
         component={Login}

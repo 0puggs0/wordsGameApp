@@ -4,11 +4,8 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
-  ScrollView,
   StyleSheet,
   Text,
-  Touchable,
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
@@ -27,6 +24,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { UserData } from "../interfaces/getUser";
 type Props = StackScreenProps<RootStackParamList, "Post", "MyStack">;
 
 interface WordRequests {
@@ -35,9 +33,11 @@ interface WordRequests {
 interface WordRequestsItem {
   date: string;
   id: string;
-  userId: string;
+  senderId: string;
+  targetId: string;
   username: string;
   word: string;
+  status: string;
 }
 export default function Post({ navigation, route }: Props) {
   const flatListRef = useRef<FlatList>(null);
@@ -82,6 +82,23 @@ export default function Post({ navigation, route }: Props) {
   const [word, setWord] = useState("");
   const [isKeyboardOpen, setKeyboardOpen] = useState(false);
   const token = Storage.get("token");
+
+  const myId = useQuery<UserData>({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "",
+      };
+      if (token) {
+        headers.Authorization = token;
+      }
+      const response = await fetch(`${baseUrl}/five_letters/user`, {
+        headers: headers,
+      });
+      return response.json();
+    },
+  });
   const wordRequests = useQuery<WordRequests>({
     queryKey: ["wordRequests"],
     queryFn: async () => {
@@ -92,20 +109,22 @@ export default function Post({ navigation, route }: Props) {
       if (token) {
         headers.Authorization = token;
       }
-      const response = await fetch(`${baseUrl}/five_letters/word-requests`, {
-        headers: headers,
-      });
+      const response = await fetch(
+        `${baseUrl}/five_letters/word-requests/${userId}`,
+        {
+          headers: headers,
+        }
+      );
+
+      if (flatListRef.current && wordRequests?.data?.message.length) {
+        flatListRef.current.scrollToEnd({
+          animated: true,
+        });
+      }
 
       return response.json();
     },
   });
-  useEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({
-        animated: true,
-      });
-    }
-  }, [wordRequests?.data?.message.length]);
 
   const sendWord = async (word: string, userId: string) => {
     const headers = {
@@ -125,7 +144,18 @@ export default function Post({ navigation, route }: Props) {
     });
     if (response.ok) {
       setWord("");
-      Alert.alert("Слово отправлено");
+      Alert.alert("Слово отправлено", "", [
+        {
+          text: "OK",
+          onPress: () => {
+            if (flatListRef.current && wordRequests?.data?.message.length) {
+              flatListRef.current.scrollToEnd({
+                animated: true,
+              });
+            }
+          },
+        },
+      ]);
     } else {
       Alert.alert("Ошибка при отправке слова");
     }
@@ -144,6 +174,7 @@ export default function Post({ navigation, route }: Props) {
       >
         {username}
       </Text>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -152,33 +183,66 @@ export default function Post({ navigation, route }: Props) {
         <FlatList
           data={wordRequests?.data?.message}
           showsVerticalScrollIndicator={false}
-          scrollEnabled={true}
           ref={flatListRef}
-          renderItem={({ item }) => {
+          renderItem={({
+            item,
+            index,
+          }: {
+            item: WordRequestsItem;
+            index: number;
+          }) => {
             if (item.senderId === userId) {
               return (
                 <Message
                   logo={""}
-                  date={dayjs(item.date).format("DD.MM.YYYY")}
+                  date={
+                    dayjs(item.date).format("DD.MM.YYYY") !==
+                      dayjs(
+                        wordRequests?.data?.message[index - 1]?.date
+                      ).format("DD.MM.YYYY") || index === 0
+                      ? dayjs(item.date).format("DD.MM.YYYY")
+                      : ""
+                  }
                   time={dayjs(item.date).format("HH:mm")}
-                  message={"Отправил слово"}
+                  message={
+                    item.status === "done"
+                      ? `Слово отгадано - `
+                      : item.status === "pending"
+                      ? "Отправил слово"
+                      : `Слово не отгадано - `
+                  }
                   button={() =>
-                    navigation.navigate("Word", { message: item.word })
+                    navigation.navigate("Word", {
+                      message: item.word,
+                      username: item.username,
+                      requestId: item.id,
+                    })
                   }
                   isSender={false}
+                  sender={item.username}
+                  status={item.status}
+                  word={item.word}
                 />
               );
             }
             return (
               <Message
                 logo={""}
-                date={dayjs(item.date).format("DD.MM.YYYY")}
-                time={dayjs(item.date).format("HH:mm")}
-                message={`Отправил слово - ${item.word}`}
-                button={() =>
-                  navigation.navigate("Word", { message: item.word })
+                date={
+                  dayjs(item.date).format("DD.MM.YYYY") !==
+                    dayjs(wordRequests?.data?.message[index - 1]?.date).format(
+                      "DD.MM.YYYY"
+                    ) || index === 0
+                    ? dayjs(item.date).format("DD.MM.YYYY")
+                    : ""
                 }
+                time={dayjs(item.date).format("HH:mm")}
+                message={`Отправил слово - `}
+                button={() => ""}
                 isSender={true}
+                sender={item.username}
+                status={item.status}
+                word={item.word}
               />
             );
           }}
@@ -206,7 +270,10 @@ export default function Post({ navigation, route }: Props) {
             maxLength={5}
           />
           <TouchableOpacity
-            onPress={() => sendWord(word, userId)}
+            onPress={async () => {
+              await sendWord(word, userId);
+              await wordRequests.refetch();
+            }}
             style={{
               borderTopRightRadius: 13,
               borderBottomRightRadius: 13,
@@ -233,8 +300,9 @@ export default function Post({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 34,
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     flex: 1,
+
     paddingVertical: 80,
     backgroundColor: "#1D1F25",
     gap: 30,

@@ -13,8 +13,12 @@ import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
 
 type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
-export default function Word({ navigation }: Props) {
+export default function Word({ navigation, route }: Props) {
   const token = Storage.get("token");
+  const message = route?.params?.message;
+  const sendedUser = route?.params?.username;
+  const requestId = route?.params?.requestId;
+
   const [isError, setIsError] = useState(false);
   const [errorType, setErrorType] = useState("");
   const [isWin, setIsWin] = useState(false);
@@ -28,7 +32,11 @@ export default function Word({ navigation }: Props) {
   >(getKeyboard());
   const [disabledButton, setDisabledButton] = useState(false);
   useEffect(() => {
-    getData();
+    if (message === undefined) {
+      getData();
+    } else {
+      setData(message);
+    }
   }, []);
   const colorMap = {
     green: ["#02C39A", "#189D7C"],
@@ -57,10 +65,15 @@ export default function Word({ navigation }: Props) {
     const response = await fetch(`${baseUrl}/five_letters/finish`, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify({ isWin: isWin, answer: word }),
+      body: JSON.stringify({
+        isWin: isWin,
+        answer: word,
+        requestId: requestId,
+      }),
     });
     console.log(await response.json());
   };
+
   const modalNext = async () => {
     if (isWin) {
       postStats(true, data);
@@ -224,7 +237,11 @@ export default function Word({ navigation }: Props) {
     <View style={styles.wordScreenContainer}>
       <View style={styles.container}>
         <View>
-          <Text style={styles.headerText}>Рандомные слова</Text>
+          <Text style={styles.headerText}>
+            {message === undefined
+              ? "Рандомные слова"
+              : `Слово от ${sendedUser}`}
+          </Text>
         </View>
         <View style={styles.strokeContainer}>
           {word.map((stroke, indexStroke) => {
