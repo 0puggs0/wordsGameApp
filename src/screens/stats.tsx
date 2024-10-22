@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Alert,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -32,7 +33,7 @@ type Props = StackScreenProps<RootStackParamList, "Stats", "MyStack">;
 export default function Stats({ navigation, route }: Props) {
   const userId = route?.params?.userId;
   const userName = route?.params?.userName;
-  const userFriends = route?.params?.userFriends;
+  const userImage = route?.params?.userImage;
   const [userData, setUserData] = useState<UserStats>({
     message: {
       currentStreak: 0,
@@ -155,7 +156,11 @@ export default function Stats({ navigation, route }: Props) {
           )}
         </View>
         <View style={styles.headerContainer}>
-          <View style={styles.logo}></View>
+          {userName === undefined ? (
+            <Image source={{ uri: data?.image }} style={styles.logo}></Image>
+          ) : (
+            <Image source={{ uri: userImage }} style={styles.logo}></Image>
+          )}
           <View>
             {isPending ? (
               <ActivityIndicator />

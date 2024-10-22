@@ -221,6 +221,7 @@ export default function Friends({ navigation }: Props) {
                         userId: item.id,
                         userFriends: 0,
                         userName: item.username,
+                        userImage: item.image,
                       });
                       bottomSheetRef?.current?.dismiss();
                     } catch (error) {
@@ -450,6 +451,7 @@ export default function Friends({ navigation }: Props) {
                             userId: item.id,
                             userFriends: item?.friends,
                             userName: item.username,
+                            userImage: "",
                           });
                           bottomSheetRef?.current?.dismiss();
                         } catch (error) {

@@ -1,6 +1,13 @@
 export type RootStackParamList = {
   InitialScreen: undefined;
-  Stats: undefined | { userId: string; userFriends: number; userName: string };
+  Stats:
+    | undefined
+    | {
+        userId: string;
+        userFriends: number;
+        userName: string;
+        userImage: string;
+      };
   Word: undefined | { message: string; username: string; requestId: string };
   Login: undefined;
   Register: undefined;
