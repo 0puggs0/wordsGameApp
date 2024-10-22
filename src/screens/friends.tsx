@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Keyboard,
+  Image,
 } from "react-native";
 import React, { useCallback, useRef, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -183,7 +184,14 @@ export default function Friends({ navigation }: Props) {
           </Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate("Stats")}>
-          <View style={styles.logo}></View>
+          {friends?.data?.image === null ? (
+            <View style={styles.logo}></View>
+          ) : (
+            <Image
+              style={styles.logo}
+              source={{ uri: friends?.data?.image }}
+            ></Image>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -225,7 +233,14 @@ export default function Friends({ navigation }: Props) {
                   style={styles.friendCard}
                 >
                   <View style={styles.friendCardContent}>
-                    <View style={styles.friendLogo}></View>
+                    {item.image === null ? (
+                      <View style={styles.friendLogo}></View>
+                    ) : (
+                      <Image
+                        style={styles.friendLogo}
+                        source={{ uri: item.image }}
+                      ></Image>
+                    )}
                     <Text style={styles.friendNameText}>{item.username}</Text>
                   </View>
                   {isLongPress ? (

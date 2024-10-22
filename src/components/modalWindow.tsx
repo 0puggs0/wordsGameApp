@@ -9,6 +9,7 @@ interface Props {
   isError: boolean;
   errorType: string;
   navigate: () => void;
+  sendedUser: string | undefined;
 }
 export default function ModalWindow(props: Props) {
   return (
@@ -51,9 +52,11 @@ export default function ModalWindow(props: Props) {
                     <TouchableOpacity onPress={props.navigate}>
                       <Text style={styles.modalCheckButton}>Выйти</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={props.modalNext}>
-                      <Text style={styles.modalCheckButton}>Далее</Text>
-                    </TouchableOpacity>
+                    {props.sendedUser === undefined && (
+                      <TouchableOpacity onPress={props.modalNext}>
+                        <Text style={styles.modalCheckButton}>Далее</Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                 </View>
               </View>

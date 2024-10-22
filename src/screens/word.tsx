@@ -11,6 +11,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
+import { SCREEN_WIDTH } from "../constants/sizes";
 
 type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
 export default function Word({ navigation, route }: Props) {
@@ -297,6 +298,7 @@ export default function Word({ navigation, route }: Props) {
           isError={isError}
           errorType={errorType}
           navigate={modalExit}
+          sendedUser={sendedUser}
         />
       </View>
     </View>
@@ -313,7 +315,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#1D1F25",
   },
   container: {
-    paddingHorizontal: 1,
     gap: 20,
     justifyContent: "center",
     alignItems: "center",
@@ -322,10 +323,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    paddingHorizontal: 5,
   },
   stroke: {
-    paddingHorizontal: 5,
     gap: 10,
     flexDirection: "row",
     flexWrap: "wrap",
@@ -339,15 +338,16 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   symbolBorderContainer: {
-    width: 65,
-    height: 65,
+    // width: 65,
+    width: SCREEN_WIDTH / 5 - 12,
+    height: SCREEN_WIDTH / 5 - 12,
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
   },
   symbolInnerContainer: {
-    width: 55,
-    height: 55,
+    width: SCREEN_WIDTH / 5 - 24,
+    height: SCREEN_WIDTH / 5 - 24,
     borderRadius: 10,
     overflow: "hidden",
     justifyContent: "center",

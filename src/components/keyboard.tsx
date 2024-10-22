@@ -27,6 +27,8 @@ export function Keyboard(props: Props) {
                 key={item.letter}
                 style={{
                   flexGrow: isLastItem ? 1 : 0,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
                 disabled={props.russianKeyboardData[index].disabled}
                 onPress={() =>
@@ -35,23 +37,27 @@ export function Keyboard(props: Props) {
                     : props.handleClear()
                 }
               >
-                <Text
-                  style={{
-                    overflow: "hidden",
-                    fontSize: 23,
-                    paddingVertical: 8,
-                    width: isLastItem ? "100%" : 27,
-                    flexGrow: isLastItem ? 1 : 0,
-                    color: "white",
-                    textAlign: "center",
-                    backgroundColor:
-                      props.russianKeyboardData[index].backgroundColor,
-                    borderRadius: 8,
-                    fontFamily: "Nunito-Regular",
-                  }}
-                >
-                  {item.letter}
-                </Text>
+                {index === props.russianKeyboardData.length - 1 ? (
+                  <item.component />
+                ) : (
+                  <Text
+                    style={{
+                      overflow: "hidden",
+                      fontSize: 23,
+                      paddingVertical: 8,
+                      width: isLastItem ? "100%" : 27,
+                      flexGrow: isLastItem ? 1 : 0,
+                      color: "white",
+                      textAlign: "center",
+                      backgroundColor:
+                        props.russianKeyboardData[index].backgroundColor,
+                      borderRadius: 8,
+                      fontFamily: "Nunito-Regular",
+                    }}
+                  >
+                    {item.letter}
+                  </Text>
+                )}
               </TouchableOpacity>
             );
           })}
@@ -89,7 +95,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 4,
-    justifyContent: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 5,
   },
   wordText: {

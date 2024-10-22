@@ -25,6 +25,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { UserData } from "../interfaces/getUser";
+import { Skeleton } from "react-native-skeletons";
 type Props = StackScreenProps<RootStackParamList, "Post", "MyStack">;
 
 interface WordRequests {
@@ -83,22 +84,6 @@ export default function Post({ navigation, route }: Props) {
   const [isKeyboardOpen, setKeyboardOpen] = useState(false);
   const token = Storage.get("token");
 
-  const myId = useQuery<UserData>({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "",
-      };
-      if (token) {
-        headers.Authorization = token;
-      }
-      const response = await fetch(`${baseUrl}/five_letters/user`, {
-        headers: headers,
-      });
-      return response.json();
-    },
-  });
   const wordRequests = useQuery<WordRequests>({
     queryKey: ["wordRequests"],
     queryFn: async () => {
@@ -115,7 +100,6 @@ export default function Post({ navigation, route }: Props) {
           headers: headers,
         }
       );
-
       if (flatListRef.current && wordRequests?.data?.message.length) {
         flatListRef.current.scrollToEnd({
           animated: true,
@@ -174,7 +158,6 @@ export default function Post({ navigation, route }: Props) {
       >
         {username}
       </Text>
-
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}

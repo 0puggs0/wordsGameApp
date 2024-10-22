@@ -4,11 +4,13 @@ export interface UserData {
   stats: Stat;
   token: string;
   username: string;
+  image: string;
 }
 export interface Friend {
   created: string;
   id: string;
   username: string;
+  image: string;
 }
 
 export interface Stat {

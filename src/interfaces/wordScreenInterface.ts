@@ -11,4 +11,5 @@ export interface KeyboardItem {
   backgroundColor: string;
   color: string;
   disabled: boolean;
+  component: (() => React.JSX.Element) | null;
 }

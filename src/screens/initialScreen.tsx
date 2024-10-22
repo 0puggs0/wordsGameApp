@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -8,10 +8,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
 import { baseUrl } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
+import { getNewFCMToken } from "../firebase/firebaseClient";
 
 type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
 
 export default function InitialScreen({ navigation }: Props) {
+  useEffect(() => {
+    getNewFCMToken();
+  }, []);
   const token = Storage.get("token");
   const { data, error, isPending } = useQuery<UserData>({
     queryKey: ["user"],

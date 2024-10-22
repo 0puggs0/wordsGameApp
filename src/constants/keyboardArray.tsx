@@ -1,3 +1,4 @@
+import Feather from "@expo/vector-icons/Feather";
 export const getKeyboard = () => {
   const initialKeyboard = [
     {
@@ -7,6 +8,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 2,
@@ -15,6 +17,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 3,
@@ -23,6 +26,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 4,
@@ -31,6 +35,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 5,
@@ -39,6 +44,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 6,
@@ -47,6 +53,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 7,
@@ -55,6 +62,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
 
     {
@@ -64,6 +72,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 9,
@@ -72,6 +81,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 10,
@@ -80,6 +90,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 11,
@@ -88,6 +99,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 12,
@@ -96,6 +108,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
 
     {
@@ -105,6 +118,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 14,
@@ -113,6 +127,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 15,
@@ -121,6 +136,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 16,
@@ -129,6 +145,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 17,
@@ -137,6 +154,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 18,
@@ -145,6 +163,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 19,
@@ -153,6 +172,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
 
     {
@@ -162,6 +182,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 21,
@@ -170,6 +191,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 22,
@@ -178,6 +200,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 23,
@@ -186,6 +209,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 24,
@@ -194,6 +218,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 25,
@@ -202,6 +227,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 26,
@@ -210,6 +236,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
 
     {
@@ -219,6 +246,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 28,
@@ -227,6 +255,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 29,
@@ -235,6 +264,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 30,
@@ -243,6 +273,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 31,
@@ -251,6 +282,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 32,
@@ -259,6 +291,7 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: null,
     },
     {
       id: 33,
@@ -267,6 +300,23 @@ export const getKeyboard = () => {
       backgroundColor: "#48495F",
       color: "white",
       disabled: false,
+      component: () => {
+        return (
+          <Feather
+            style={{
+              paddingVertical: 10,
+              backgroundColor: "#48495F",
+              overflow: "hidden",
+              width: "100%",
+              borderRadius: 8,
+              textAlign: "center",
+            }}
+            name="delete"
+            size={27}
+            color="white"
+          />
+        );
+      },
     },
   ];
   return initialKeyboard;

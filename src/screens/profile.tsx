@@ -1,7 +1,9 @@
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TextInput,
+  Image,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -10,13 +12,33 @@ import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
 import { baseUrl } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
+import * as ImagePicker from "expo-image-picker";
+import { FileService } from "../utils/uploadPhoto";
 
 export default function Profile() {
   const [loginValue, setLoginValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
 
-  const token = Storage.get("token");
+  const [image, setImage] = useState<string | null>(null);
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      const response = await FileService.upload(result);
+      if (response === true) {
+        refetch();
+      }
+    }
+  };
+  const token = Storage.get("token");
   const { data, error, isPending, refetch } = useQuery<UserData>({
     queryKey: ["username"],
     queryFn: async () => {
@@ -33,9 +55,6 @@ export default function Profile() {
       return response.json();
     },
   });
-
-  const [username, setUsername] = useState(data?.username);
-
   const changeData = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -44,35 +63,48 @@ export default function Profile() {
     if (token) {
       headers.Authorization = token;
     }
-    await fetch(`${baseUrl}/five_letters/edit`, {
+    const response = await fetch(`${baseUrl}/five_letters/edit`, {
       method: "POST",
       body: JSON.stringify({
         username: loginValue,
       }),
       headers: headers,
-    })
-      .then((res) => res.json())
-      .then((json) => console.log(json));
-  };
-
-  const refresh = () => {
-    if (loginValue !== data?.username && loginValue.length) {
-      setUsername(loginValue);
-      changeData();
+    });
+    if (response.ok) {
+      await refetch();
     }
   };
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center", gap: 5 }}>
-        <View
-          style={{
-            width: 1,
-            padding: 50,
-            backgroundColor: "gray",
-            borderRadius: 50,
-          }}
-        ></View>
-        <Text style={styles.username}>{username}</Text>
+        {data?.image == null ? (
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{
+              width: 1,
+              padding: 50,
+              backgroundColor: "gray",
+              borderRadius: 50,
+            }}
+          ></TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={pickImage}>
+            <Image
+              source={{ uri: data?.image }}
+              style={{
+                width: 1,
+                padding: 50,
+                borderRadius: 50,
+              }}
+            />
+          </TouchableOpacity>
+        )}
+
+        {isPending ? (
+          <ActivityIndicator size={"small"} color={"#CED5DB"} />
+        ) : (
+          <Text style={styles.username}>{data?.username}</Text>
+        )}
       </View>
       <View style={{ width: "100%", gap: 10 }}>
         <View style={{ gap: 5 }}>
@@ -80,6 +112,7 @@ export default function Profile() {
           <TextInput
             placeholder="Новый логин"
             placeholderTextColor={"#6F7276"}
+            autoCapitalize="none"
             style={{
               height: 54,
               backgroundColor: "#272931",
@@ -112,7 +145,7 @@ export default function Profile() {
           />
         </View>
       </View>
-      <TouchableOpacity onPress={() => refresh()} style={{ width: "100%" }}>
+      <TouchableOpacity onPress={() => changeData()} style={{ width: "100%" }}>
         <Text
           style={{
             paddingVertical: 16,

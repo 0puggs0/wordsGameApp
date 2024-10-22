@@ -17,7 +17,11 @@ interface Props {
 
 export default function Message(props: Props) {
   return (
-    <View style={{ marginBottom: 16 }}>
+    <View
+      style={{
+        marginBottom: 16,
+      }}
+    >
       <Text
         style={{
           textAlign: "center",
@@ -60,7 +64,7 @@ export default function Message(props: Props) {
             paddingHorizontal: 22,
             paddingVertical: 14,
             backgroundColor: "#CED5DB",
-            borderRadius: 13,
+            borderRadius: 10,
           }}
         >
           <Text

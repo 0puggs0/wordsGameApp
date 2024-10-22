@@ -7,15 +7,25 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect } from "react";
-import { getNewFCMToken } from "./src/firebase/firebaseClient";
 import messaging from "@react-native-firebase/messaging";
 
 const client = new QueryClient();
 export default function App() {
   useEffect(() => {
-    getNewFCMToken();
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+    });
+    messaging().onNotificationOpenedApp(async (remoteMessage) => {
+      console.log(
+        "Notification caused app to open from background state:",
+        remoteMessage
+      );
+    });
+    messaging().onMessage(async (remoteMessage) => {
+      console.log("notification on frog state......", remoteMessage);
+    });
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in the background!", remoteMessage);
     });
     return unsubscribe;
   }, []);
