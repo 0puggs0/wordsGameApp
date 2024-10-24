@@ -38,7 +38,7 @@ export function Keyboard(props: Props) {
                 }
               >
                 {index === props.russianKeyboardData.length - 1 ? (
-                  <item.component />
+                  item.component()
                 ) : (
                   <Text
                     style={{

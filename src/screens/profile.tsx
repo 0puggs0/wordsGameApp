@@ -19,8 +19,6 @@ export default function Profile() {
   const [loginValue, setLoginValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
 
-  const [image, setImage] = useState<string | null>(null);
-
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -28,12 +26,9 @@ export default function Profile() {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.canceled) {
       const response = await FileService.upload(result);
-      if (response === true) {
+      if (response) {
         refetch();
       }
     }
@@ -126,7 +121,6 @@ export default function Profile() {
             onChangeText={(value) => setLoginValue(value)}
           />
         </View>
-
         <View style={{ gap: 5 }}>
           <Text style={styles.title}>Пароль</Text>
           <TextInput

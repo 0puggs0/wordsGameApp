@@ -24,8 +24,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { UserData } from "../interfaces/getUser";
-import { Skeleton } from "react-native-skeletons";
 type Props = StackScreenProps<RootStackParamList, "Post", "MyStack">;
 
 interface WordRequests {
@@ -60,7 +58,6 @@ export default function Post({ navigation, route }: Props) {
   }, []);
   const animatedPadding = useSharedValue(34);
   const keyboardDidShow = () => {
-    setKeyboardOpen(true);
     animatedPadding.value = withTiming(0, { duration: 250 });
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({
@@ -68,9 +65,7 @@ export default function Post({ navigation, route }: Props) {
       });
     }
   };
-
   const keyboardDidHide = () => {
-    setKeyboardOpen(false);
     animatedPadding.value = withTiming(34, { duration: 250 });
   };
 
@@ -81,7 +76,6 @@ export default function Post({ navigation, route }: Props) {
   });
   const { username, userId } = route?.params;
   const [word, setWord] = useState("");
-  const [isKeyboardOpen, setKeyboardOpen] = useState(false);
   const token = Storage.get("token");
 
   const wordRequests = useQuery<WordRequests>({
@@ -100,12 +94,7 @@ export default function Post({ navigation, route }: Props) {
           headers: headers,
         }
       );
-      if (flatListRef.current && wordRequests?.data?.message.length) {
-        flatListRef.current.scrollToEnd({
-          animated: true,
-        });
-      }
-
+      console.log("done");
       return response.json();
     },
   });
@@ -148,22 +137,14 @@ export default function Post({ navigation, route }: Props) {
 
   return (
     <View onTouchStart={() => Keyboard.dismiss()} style={styles.container}>
-      <Text
-        style={{
-          textAlign: "center",
-          fontFamily: "Nunito-ExtraBold",
-          fontSize: 28,
-          color: "#6F7276",
-        }}
-      >
-        {username}
-      </Text>
+      <Text style={styles.username}>{username}</Text>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
         keyboardVerticalOffset={5}
       >
         <FlatList
+          keyExtractor={(item) => item.id}
           data={wordRequests?.data?.message}
           showsVerticalScrollIndicator={false}
           ref={flatListRef}
@@ -257,22 +238,9 @@ export default function Post({ navigation, route }: Props) {
               await sendWord(word, userId);
               await wordRequests.refetch();
             }}
-            style={{
-              borderTopRightRadius: 13,
-              borderBottomRightRadius: 13,
-              backgroundColor: "#272931",
-            }}
+            style={styles.sendWordButton}
           >
-            <Feather
-              style={{
-                overflow: "hidden",
-                paddingHorizontal: 17,
-                padding: 20,
-              }}
-              name="send"
-              size={23}
-              color="white"
-            />
+            <Feather style={styles.icon} name="send" size={23} color="white" />
           </TouchableOpacity>
         </Animated.View>
       </KeyboardAvoidingView>
@@ -290,6 +258,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#1D1F25",
     gap: 30,
   },
+  username: {
+    textAlign: "center",
+    fontFamily: "Nunito-ExtraBold",
+    fontSize: 28,
+    color: "#6F7276",
+  },
   sendWordInput: {
     width: "100%",
     backgroundColor: "#272931",
@@ -302,5 +276,15 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Regular",
     color: "#484B55",
     fontSize: 17,
+  },
+  sendWordButton: {
+    borderTopRightRadius: 13,
+    borderBottomRightRadius: 13,
+    backgroundColor: "#272931",
+  },
+  icon: {
+    overflow: "hidden",
+    paddingHorizontal: 17,
+    padding: 20,
   },
 });

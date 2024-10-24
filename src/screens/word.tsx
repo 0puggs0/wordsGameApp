@@ -12,6 +12,8 @@ import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
 import { SCREEN_WIDTH } from "../constants/sizes";
+import Symbol from "../components/symbol";
+import { useSharedValue, withTiming } from "react-native-reanimated";
 
 type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
 export default function Word({ navigation, route }: Props) {
@@ -39,6 +41,7 @@ export default function Word({ navigation, route }: Props) {
       setData(message);
     }
   }, []);
+
   const colorMap = {
     green: ["#02C39A", "#189D7C"],
     borderGreen: ["#189D7C", "#02C39A"],
@@ -250,31 +253,12 @@ export default function Word({ navigation, route }: Props) {
               <View key={indexStroke} style={styles.stroke}>
                 {stroke.map((symbol, indexSymbol) => {
                   return (
-                    <View key={indexSymbol}>
-                      <LinearGradient
-                        style={styles.symbolBorderContainer}
-                        colors={
-                          word[indexStroke][indexSymbol].borderBackgroundColor
-                        }
-                      >
-                        <LinearGradient
-                          colors={
-                            word[indexStroke][indexSymbol].backgroundColor
-                          }
-                          style={styles.symbolInnerContainer}
-                        >
-                          <Text
-                            style={{
-                              color: word[indexStroke][indexSymbol].textColor,
-                              fontSize: 38,
-                              fontFamily: "Nunito-Bold",
-                            }}
-                          >
-                            {symbol.symbol.toUpperCase()}
-                          </Text>
-                        </LinearGradient>
-                      </LinearGradient>
-                    </View>
+                    <Symbol
+                      word={word}
+                      indexStroke={indexStroke}
+                      indexSymbol={indexSymbol}
+                      symbol={symbol}
+                    />
                   );
                 })}
               </View>

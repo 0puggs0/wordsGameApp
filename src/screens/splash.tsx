@@ -34,5 +34,3 @@ export default function Splash({ navigation }: Props) {
   });
   return <View style={{ flex: 1 }}></View>;
 }
-
-const styles = StyleSheet.create({});
