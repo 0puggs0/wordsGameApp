@@ -8,7 +8,9 @@ export type RootStackParamList = {
         userName: string;
         userImage: string;
       };
-  Word: undefined | { message: string; username: string; requestId: string };
+  Word:
+    | undefined
+    | { message: string; username: string; requestId: string; userId: string };
   Login: undefined;
   Register: undefined;
   Post: { username: string; userId: string };

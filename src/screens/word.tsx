@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { LinearGradient } from "expo-linear-gradient";
 import { Keyboard } from "../components/keyboard";
 import { KeyboardItem, WordItem } from "../interfaces/wordScreenInterface";
 import { checkString } from "../utils/checkString";
@@ -13,13 +12,13 @@ import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
 import { SCREEN_WIDTH } from "../constants/sizes";
 import Symbol from "../components/symbol";
-import { useSharedValue, withTiming } from "react-native-reanimated";
 
 type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
 export default function Word({ navigation, route }: Props) {
   const token = Storage.get("token");
   const message = route?.params?.message;
   const sendedUser = route?.params?.username;
+  const senderId = route?.params?.userId;
   const requestId = route?.params?.requestId;
 
   const [isError, setIsError] = useState(false);
@@ -75,7 +74,6 @@ export default function Word({ navigation, route }: Props) {
         requestId: requestId,
       }),
     });
-    console.log(await response.json());
   };
 
   const modalNext = async () => {
@@ -89,9 +87,9 @@ export default function Word({ navigation, route }: Props) {
   };
   const modalExit = async () => {
     if (isWin) {
-      postStats(true, data);
+      await postStats(true, data);
     } else {
-      postStats(false, data);
+      await postStats(false, data);
     }
     setIsWin(false);
     setModalVisible(false);
@@ -99,7 +97,15 @@ export default function Word({ navigation, route }: Props) {
     setRussianKeyboardData(getKeyboard());
     setCurrentColumn(0);
     setCurrentRow(0);
-    navigation.navigate("InitialScreen");
+    if (senderId !== undefined) {
+      console.log(sendedUser, senderId);
+      navigation.navigate("Post", {
+        userId: senderId,
+        username: sendedUser || "",
+      });
+    } else {
+      navigation.navigate("InitialScreen");
+    }
   };
   const checkWordInData = async (input: string) => {
     const response = await fetch(

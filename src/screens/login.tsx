@@ -1,12 +1,4 @@
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -23,8 +15,8 @@ export default function Login({ navigation }: Props) {
   const [passwordValue, setPasswordValue] = useState("");
   const { isPending, mutate } = useMutation({
     mutationKey: ["login"],
-    mutationFn: () => {
-      return fetch(`${baseUrl}/five_letters/login`, {
+    mutationFn: async () => {
+      return await fetch(`${baseUrl}/five_letters/login`, {
         method: "POST",
         body: JSON.stringify({
           email: loginValue,

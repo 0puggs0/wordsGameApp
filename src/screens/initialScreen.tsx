@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -6,7 +6,7 @@ import { RootStackParamList } from "../types/rootStackParamList";
 import Feather from "@expo/vector-icons/Feather";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
-import { baseUrl } from "../constants/api";
+import { fetchData, headers } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import { getNewFCMToken } from "../firebase/firebaseClient";
 
@@ -16,22 +16,11 @@ export default function InitialScreen({ navigation }: Props) {
   useEffect(() => {
     getNewFCMToken();
   }, []);
+
   const token = Storage.get("token");
-  const { data, error, isPending } = useQuery<UserData>({
+  const { data } = useQuery<UserData>({
     queryKey: ["user"],
-    queryFn: async () => {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "",
-      };
-      if (token) {
-        headers.Authorization = token;
-      }
-      const response = await fetch(`${baseUrl}/five_letters/user`, {
-        headers: headers,
-      });
-      return response.json();
-    },
+    queryFn: async () => await fetchData("five_letters/user", headers, token),
   });
   return (
     <View style={styles.container}>

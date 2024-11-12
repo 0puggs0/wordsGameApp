@@ -8,11 +8,11 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Message from "../components/message";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
-import { baseUrl } from "../constants/api";
+import { baseUrl, fetchData, headers } from "../constants/api";
 import Feather from "@expo/vector-icons/Feather";
 import { StackScreenProps } from "@react-navigation/stack";
 import dayjs from "dayjs";
@@ -24,6 +24,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useFocusEffect } from "@react-navigation/native";
 type Props = StackScreenProps<RootStackParamList, "Post", "MyStack">;
 
 interface WordRequests {
@@ -65,6 +66,7 @@ export default function Post({ navigation, route }: Props) {
       });
     }
   };
+
   const keyboardDidHide = () => {
     animatedPadding.value = withTiming(34, { duration: 250 });
   };
@@ -80,24 +82,15 @@ export default function Post({ navigation, route }: Props) {
 
   const wordRequests = useQuery<WordRequests>({
     queryKey: ["wordRequests"],
-    queryFn: async () => {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "",
-      };
-      if (token) {
-        headers.Authorization = token;
-      }
-      const response = await fetch(
-        `${baseUrl}/five_letters/word-requests/${userId}`,
-        {
-          headers: headers,
-        }
-      );
-      console.log("done");
-      return response.json();
-    },
+    queryFn: async () =>
+      await fetchData(`five_letters/word-requests/${userId}`, headers, token),
   });
+  useFocusEffect(
+    useCallback(() => {
+      console.log("123");
+      wordRequests.refetch();
+    }, [wordRequests])
+  );
 
   const sendWord = async (word: string, userId: string) => {
     const headers = {
@@ -144,17 +137,12 @@ export default function Post({ navigation, route }: Props) {
         keyboardVerticalOffset={5}
       >
         <FlatList
+          initialNumToRender={wordRequests?.data?.message.length}
           keyExtractor={(item) => item.id}
           data={wordRequests?.data?.message}
           showsVerticalScrollIndicator={false}
           ref={flatListRef}
-          renderItem={({
-            item,
-            index,
-          }: {
-            item: WordRequestsItem;
-            index: number;
-          }) => {
+          renderItem={({ item, index }) => {
             if (item.senderId === userId) {
               return (
                 <Message
@@ -180,6 +168,7 @@ export default function Post({ navigation, route }: Props) {
                       message: item.word,
                       username: item.username,
                       requestId: item.id,
+                      userId: item.senderId,
                     })
                   }
                   isSender={false}

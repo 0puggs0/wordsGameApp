@@ -12,11 +12,10 @@ import React, { useCallback, useRef, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
-import { baseUrl } from "../constants/api";
+import { baseUrl, fetchData, headers } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
@@ -49,7 +48,6 @@ export default function Friends({ navigation }: Props) {
 
   const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState("");
-
   const [isLongPress, setLongPress] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentUserId, setCurrentUserId] = useState("");
@@ -57,54 +55,19 @@ export default function Friends({ navigation }: Props) {
 
   const friendRequests = useQuery<FriendRequestsData>({
     queryKey: ["friends"],
-    queryFn: async () => {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "",
-      };
-      if (token) {
-        headers.Authorization = token;
-      }
-      const response = await fetch(`${baseUrl}/five_letters/friend-requests`, {
-        headers: headers,
-      });
-      return response.json();
-    },
+    queryFn: async () =>
+      await fetchData("five_letters/friend-requests", headers, token),
   });
 
   const friends = useQuery<UserData>({
     queryKey: ["user"],
-    queryFn: async () => {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "",
-      };
-      if (token) {
-        headers.Authorization = token;
-      }
-      const response = await fetch(`${baseUrl}/five_letters/user`, {
-        headers: headers,
-      });
-      return response.json();
-    },
+    queryFn: async () => await fetchData("five_letters/user", headers, token),
   });
 
   const users = useQuery<SearchAllUsers>({
     enabled: true,
     queryKey: ["users"],
-    queryFn: async () => {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "",
-      };
-      if (token) {
-        headers.Authorization = token;
-      }
-      const response = await fetch(`${baseUrl}/five_letters/users`, {
-        headers: headers,
-      });
-      return response.json();
-    },
+    queryFn: async () => await fetchData("five_letters/users", headers, token),
   });
 
   const fetchAcceptRequest = async (

@@ -13,10 +13,10 @@ export default function Register({ navigation }: Props) {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  const { error, data, isPending, mutate } = useMutation({
+  const { isPending, mutate } = useMutation({
     mutationKey: ["register", userName, userEmail, userPassword],
-    mutationFn: () => {
-      return fetch(`${baseUrl}/five_letters/register`, {
+    mutationFn: async () => {
+      return await fetch(`${baseUrl}/five_letters/register`, {
         method: "POST",
         body: JSON.stringify({
           username: userName,

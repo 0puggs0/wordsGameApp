@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import { View } from "react-native";
+import React from "react";
 import { Storage } from "../utils/storage";
 import { baseUrl } from "../constants/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { StackScreenProps } from "@react-navigation/stack";
 import { UserData } from "../interfaces/getUser";

@@ -7,21 +7,20 @@ const createFormData = (uri: string) => {
   const fileType = fileName?.split(".").pop();
   const formData = new FormData();
 
-  //@ts-ignore
+  //@ts-ignore P
   formData.append("file", {
     uri,
     name: fileName,
     type: `image/${fileType}`,
   });
-
   return formData;
 };
 export class FileService {
   static async upload(photo: ImagePicker.ImagePickerSuccessResult) {
     const token = Storage.get("token");
     const headers = {
-      "Content-Type": "application/json",
       Authorization: "",
+      "Content-Type": "multipart/form-data",
     };
     if (token) {
       headers.Authorization = token;
@@ -31,6 +30,7 @@ export class FileService {
       body: createFormData(photo.assets[0].uri),
       headers: headers,
     });
+    console.log(await response.json());
     if (response.ok) {
       return true;
     }

@@ -10,7 +10,7 @@ import {
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
-import { baseUrl } from "../constants/api";
+import { baseUrl, fetchData, headers } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import * as ImagePicker from "expo-image-picker";
 import { FileService } from "../utils/uploadPhoto";
@@ -34,21 +34,9 @@ export default function Profile() {
     }
   };
   const token = Storage.get("token");
-  const { data, error, isPending, refetch } = useQuery<UserData>({
+  const { data, isPending, refetch } = useQuery<UserData>({
     queryKey: ["username"],
-    queryFn: async () => {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "",
-      };
-      if (token) {
-        headers.Authorization = token;
-      }
-      const response = await fetch(`${baseUrl}/five_letters/user`, {
-        headers: headers,
-      });
-      return response.json();
-    },
+    queryFn: async () => await fetchData("five_letters/user", headers, token),
   });
   const changeData = async () => {
     const headers = {
