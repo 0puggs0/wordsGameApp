@@ -14,6 +14,7 @@ import { baseUrl, fetchData, headers } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import * as ImagePicker from "expo-image-picker";
 import { FileService } from "../utils/uploadPhoto";
+import { client } from "../../App";
 
 export default function Profile() {
   const [loginValue, setLoginValue] = useState("");
@@ -35,7 +36,7 @@ export default function Profile() {
   };
   const token = Storage.get("token");
   const { data, isPending, refetch } = useQuery<UserData>({
-    queryKey: ["username"],
+    queryKey: ["user"],
     queryFn: async () => await fetchData("five_letters/user", headers, token),
   });
   const changeData = async () => {
@@ -46,15 +47,19 @@ export default function Profile() {
     if (token) {
       headers.Authorization = token;
     }
-    const response = await fetch(`${baseUrl}/five_letters/edit`, {
-      method: "POST",
-      body: JSON.stringify({
-        username: loginValue,
-      }),
-      headers: headers,
-    });
-    if (response.ok) {
-      await refetch();
+    try {
+      const response = await fetch(`${baseUrl}/five_letters/edit`, {
+        method: "POST",
+        body: JSON.stringify({
+          username: loginValue,
+        }),
+        headers: headers,
+      });
+      if (response.ok) {
+        client.invalidateQueries({ queryKey: ["user"] });
+      }
+    } catch {
+      // error
     }
   };
   return (

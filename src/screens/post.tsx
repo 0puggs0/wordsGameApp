@@ -24,7 +24,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useFocusEffect } from "@react-navigation/native";
 type Props = StackScreenProps<RootStackParamList, "Post", "MyStack">;
 
 interface WordRequests {
@@ -41,7 +40,6 @@ interface WordRequestsItem {
 }
 export default function Post({ navigation, route }: Props) {
   const flatListRef = useRef<FlatList>(null);
-
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -51,7 +49,6 @@ export default function Post({ navigation, route }: Props) {
       "keyboardDidHide",
       keyboardDidHide
     );
-
     return () => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
@@ -85,13 +82,6 @@ export default function Post({ navigation, route }: Props) {
     queryFn: async () =>
       await fetchData(`five_letters/word-requests/${userId}`, headers, token),
   });
-  useFocusEffect(
-    useCallback(() => {
-      console.log("123");
-      wordRequests.refetch();
-    }, [wordRequests])
-  );
-
   const sendWord = async (word: string, userId: string) => {
     const headers = {
       "Content-Type": "application/json",

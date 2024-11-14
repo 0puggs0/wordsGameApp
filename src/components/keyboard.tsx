@@ -24,7 +24,7 @@ export function Keyboard(props: Props) {
             const isLastItem = index === props.russianKeyboardData.length - 1;
             return (
               <TouchableOpacity
-                key={item.letter}
+                key={item.id}
                 style={{
                   flexGrow: isLastItem ? 1 : 0,
                   alignItems: "center",

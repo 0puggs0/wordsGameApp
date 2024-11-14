@@ -16,7 +16,6 @@ export default function InitialScreen({ navigation }: Props) {
   useEffect(() => {
     getNewFCMToken();
   }, []);
-
   const token = Storage.get("token");
   const { data } = useQuery<UserData>({
     queryKey: ["user"],

@@ -9,7 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect } from "react";
 import messaging from "@react-native-firebase/messaging";
 
-const client = new QueryClient();
+export const client = new QueryClient();
 export default function App() {
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {

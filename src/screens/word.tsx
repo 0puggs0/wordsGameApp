@@ -12,8 +12,10 @@ import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
 import { SCREEN_WIDTH } from "../constants/sizes";
 import Symbol from "../components/symbol";
+import { client } from "../../App";
 
 type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
+
 export default function Word({ navigation, route }: Props) {
   const token = Storage.get("token");
   const message = route?.params?.message;
@@ -99,6 +101,7 @@ export default function Word({ navigation, route }: Props) {
     setCurrentRow(0);
     if (senderId !== undefined) {
       console.log(sendedUser, senderId);
+      client.invalidateQueries({ queryKey: ["wordRequests"] });
       navigation.navigate("Post", {
         userId: senderId,
         username: sendedUser || "",
@@ -256,10 +259,14 @@ export default function Word({ navigation, route }: Props) {
         <View style={styles.strokeContainer}>
           {word.map((stroke, indexStroke) => {
             return (
-              <View key={indexStroke} style={styles.stroke}>
+              <View
+                key={indexStroke + Math.random().toString()}
+                style={styles.stroke}
+              >
                 {stroke.map((symbol, indexSymbol) => {
                   return (
                     <Symbol
+                      key={symbol.symbol + Math.random().toString()}
                       word={word}
                       indexStroke={indexStroke}
                       indexSymbol={indexSymbol}
