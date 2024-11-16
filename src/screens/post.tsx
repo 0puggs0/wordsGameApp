@@ -7,8 +7,10 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
 } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import React, { useEffect, useRef, useState } from "react";
 import Message from "../components/message";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
@@ -54,9 +56,9 @@ export default function Post({ navigation, route }: Props) {
       keyboardDidShowListener.remove();
     };
   }, []);
-  const animatedPadding = useSharedValue(34);
+  const animatedPadding = useSharedValue(25);
   const keyboardDidShow = () => {
-    animatedPadding.value = withTiming(0, { duration: 250 });
+    animatedPadding.value = withTiming(8, { duration: 250 });
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({
         animated: true,
@@ -65,7 +67,7 @@ export default function Post({ navigation, route }: Props) {
   };
 
   const keyboardDidHide = () => {
-    animatedPadding.value = withTiming(34, { duration: 250 });
+    animatedPadding.value = withTiming(25, { duration: 250 });
   };
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -73,7 +75,7 @@ export default function Post({ navigation, route }: Props) {
       paddingHorizontal: animatedPadding.value,
     };
   });
-  const { username, userId } = route?.params;
+  const { username, userId, image, userFriends } = route?.params;
   const [word, setWord] = useState("");
   const token = Storage.get("token");
 
@@ -120,13 +122,64 @@ export default function Post({ navigation, route }: Props) {
 
   return (
     <View onTouchStart={() => Keyboard.dismiss()} style={styles.container}>
-      <Text style={styles.username}>{username}</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingBottom: 10,
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.navigate("Friends")}>
+          <MaterialIcons name="arrow-back-ios-new" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Stats", {
+              userId: userId,
+              userFriends: userFriends,
+              userName: username,
+              userImage: image,
+            })
+          }
+        >
+          <Text style={styles.username}>{username}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Stats", {
+              userId: userId,
+              userFriends: userFriends,
+              userName: username,
+              userImage: image,
+            })
+          }
+        >
+          <Image
+            source={{
+              uri: !image
+                ? "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                : image,
+            }}
+            style={{ width: 50, height: 50, borderRadius: 25 }}
+          />
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          width: "130%",
+          alignSelf: "center",
+          borderWidth: 1,
+          borderColor: "#2D3039",
+        }}
+      ></View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
         keyboardVerticalOffset={5}
       >
         <FlatList
+          contentContainerStyle={{ paddingVertical: 15 }}
           initialNumToRender={wordRequests?.data?.message.length}
           keyExtractor={(item) => item.id}
           data={wordRequests?.data?.message}
@@ -142,7 +195,9 @@ export default function Post({ navigation, route }: Props) {
                       dayjs(
                         wordRequests?.data?.message[index - 1]?.date
                       ).format("DD.MM.YYYY") || index === 0
-                      ? dayjs(item.date).format("DD.MM.YYYY")
+                      ? dayjs().diff(dayjs(item.date), "day") === 0
+                        ? "Сегодня"
+                        : dayjs(item.date).format("DD.MM.YYYY")
                       : ""
                   }
                   time={dayjs(item.date).format("HH:mm")}
@@ -150,7 +205,7 @@ export default function Post({ navigation, route }: Props) {
                     item.status === "done"
                       ? `Слово отгадано - `
                       : item.status === "pending"
-                      ? "Отправил слово"
+                      ? "Отправил вам слово"
                       : `Слово не отгадано - `
                   }
                   button={() =>
@@ -176,11 +231,13 @@ export default function Post({ navigation, route }: Props) {
                     dayjs(wordRequests?.data?.message[index - 1]?.date).format(
                       "DD.MM.YYYY"
                     ) || index === 0
-                    ? dayjs(item.date).format("DD.MM.YYYY")
+                    ? dayjs().diff(dayjs(item.date), "day") === 0
+                      ? "Сегодня"
+                      : dayjs(item.date).format("DD.MM.YYYY")
                     : ""
                 }
                 time={dayjs(item.date).format("HH:mm")}
-                message={`Отправил слово - `}
+                message={`Вы отправили - `}
                 button={() => ""}
                 isSender={true}
                 sender={item.username}
@@ -229,16 +286,14 @@ export default function Post({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 34,
+    paddingHorizontal: 25,
     justifyContent: "space-between",
     flex: 1,
 
-    paddingVertical: 80,
+    paddingVertical: 60,
     backgroundColor: "#1D1F25",
-    gap: 30,
   },
   username: {
-    textAlign: "center",
     fontFamily: "Nunito-ExtraBold",
     fontSize: 28,
     color: "#6F7276",

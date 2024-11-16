@@ -93,18 +93,14 @@ export default function Word({ navigation, route }: Props) {
     } else {
       await postStats(false, data);
     }
-    setIsWin(false);
-    setModalVisible(false);
-    setWord(getWords());
-    setRussianKeyboardData(getKeyboard());
-    setCurrentColumn(0);
-    setCurrentRow(0);
+    resetStates();
     if (senderId !== undefined) {
-      console.log(sendedUser, senderId);
       client.invalidateQueries({ queryKey: ["wordRequests"] });
       navigation.navigate("Post", {
         userId: senderId,
-        username: sendedUser || "",
+        username: sendedUser,
+        image: "",
+        userFriends: 0,
       });
     } else {
       navigation.navigate("InitialScreen");
@@ -259,14 +255,10 @@ export default function Word({ navigation, route }: Props) {
         <View style={styles.strokeContainer}>
           {word.map((stroke, indexStroke) => {
             return (
-              <View
-                key={indexStroke + Math.random().toString()}
-                style={styles.stroke}
-              >
+              <View style={styles.stroke}>
                 {stroke.map((symbol, indexSymbol) => {
                   return (
                     <Symbol
-                      key={symbol.symbol + Math.random().toString()}
                       word={word}
                       indexStroke={indexStroke}
                       indexSymbol={indexSymbol}

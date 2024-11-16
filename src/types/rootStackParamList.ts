@@ -13,7 +13,12 @@ export type RootStackParamList = {
     | { message: string; username: string; requestId: string; userId: string };
   Login: undefined;
   Register: undefined;
-  Post: { username: string; userId: string };
+  Post: {
+    username: string;
+    userId: string;
+    image: string;
+    userFriends: number;
+  };
   Profile: undefined;
   Friends: undefined;
   Splash: undefined;

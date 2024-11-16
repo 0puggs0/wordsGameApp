@@ -15,7 +15,18 @@ export default function ModalWindow(props: Props) {
   return (
     <Modal visible={props.modalVisible} transparent={true} animationType="fade">
       <View style={styles.modalContainer}>
-        <View style={styles.modalContentContainer}>
+        <View
+          style={[
+            styles.modalContentContainer,
+            {
+              borderColor: props.isWin
+                ? "#02C39A"
+                : !props.isError
+                ? "#FDD85D"
+                : "white",
+            },
+          ]}
+        >
           <View style={styles.modalContent}>
             {props.isError ? (
               <View style={styles.errorBlock}>
@@ -33,7 +44,12 @@ export default function ModalWindow(props: Props) {
               </View>
             ) : (
               <View style={styles.modalCheckBlock}>
-                <View style={styles.modalCheckHeadingBlock}>
+                <View
+                  style={[
+                    styles.modalCheckHeadingBlock,
+                    { borderBottomColor: props.isWin ? "#02C39A" : "#FDD85D" },
+                  ]}
+                >
                   <Text style={styles.modalCheckHeadingText}>
                     {props.isWin ? "ПОБЕДА!" : "ПОРАЖЕНИЕ"}
                   </Text>
@@ -41,22 +57,44 @@ export default function ModalWindow(props: Props) {
                 <View style={styles.modalCheckContent}>
                   <View style={styles.modalCheckCorrectWordBlock}>
                     <Text style={styles.modalCheckCorrectWordTitle}>
-                      Правильное слово -
+                      Загаданное слово:
                     </Text>
-                    <Text style={styles.modalCheckCorrectWordWord}>
-                      {" " + props.correctWord.toUpperCase()}
+                    <Text
+                      style={[
+                        styles.modalCheckCorrectWordWord,
+                        { color: props.isWin ? "#02C39A" : "#FDD85D" },
+                      ]}
+                    >
+                      {props.correctWord.toUpperCase()}
                     </Text>
                   </View>
 
                   <View style={styles.modalCheckButtonsBlock}>
-                    <TouchableOpacity onPress={props.navigate}>
-                      <Text style={styles.modalCheckButton}>Выйти</Text>
-                    </TouchableOpacity>
                     {props.sendedUser === undefined && (
-                      <TouchableOpacity onPress={props.modalNext}>
-                        <Text style={styles.modalCheckButton}>Далее</Text>
+                      <TouchableOpacity
+                        onPress={props.modalNext}
+                        style={{ width: "100%" }}
+                      >
+                        <Text
+                          style={[
+                            styles.modalCheckNextButton,
+                            {
+                              backgroundColor: props.isWin
+                                ? "#02C39A"
+                                : "#FDD85D",
+                            },
+                          ]}
+                        >
+                          Играть еще
+                        </Text>
                       </TouchableOpacity>
                     )}
+                    <TouchableOpacity
+                      onPress={props.navigate}
+                      style={{ width: "100%" }}
+                    >
+                      <Text style={styles.modalCheckQuitButton}>Выйти</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
@@ -81,12 +119,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContentContainer: {
+    borderColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 25,
-    borderColor: "white",
-    borderWidth: 1,
-    backgroundColor: "#343548",
+    borderRadius: 20,
+
+    borderWidth: 3,
+    backgroundColor: "#1D1F25",
     width: "100%",
   },
   errorBlock: {
@@ -129,9 +168,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 20,
     width: "100%",
-
-    borderBottomColor: "white",
-    borderBottomWidth: 1,
+    borderBottomWidth: 3,
     flexDirection: "row",
   },
   modalCheckHeadingText: {
@@ -146,31 +183,40 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 20,
   },
-  modalCheckCorrectWordBlock: { flexDirection: "row" },
+  modalCheckCorrectWordBlock: {},
   modalCheckCorrectWordTitle: {
     fontFamily: "Nunito-Regular",
-    fontSize: 19,
+    fontSize: 22,
     color: "white",
   },
   modalCheckCorrectWordWord: {
-    fontFamily: "Nunito-Bold",
-    fontSize: 19,
-    color: "white",
+    fontFamily: "Nunito-ExtraBold",
+    fontSize: 25,
+    textAlign: "center",
   },
   modalCheckButtonsBlock: {
-    flexDirection: "row",
     gap: 15,
     justifyContent: "center",
     alignItems: "center",
   },
-  modalCheckButton: {
-    paddingHorizontal: 20,
+  modalCheckNextButton: {
     paddingVertical: 13,
     overflow: "hidden",
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "white",
-    backgroundColor: "#343548",
-    color: "white",
+
+    color: "#1D1F25",
+    textAlign: "center",
+    fontFamily: "Nunito-ExtraBold",
+    fontSize: 19,
+  },
+  modalCheckQuitButton: {
+    paddingVertical: 13,
+    overflow: "hidden",
+    borderRadius: 10,
+    textAlign: "center",
+    backgroundColor: "#FFFFFF",
+    color: "#1D1F25",
+    fontSize: 19,
+    fontFamily: "Nunito-Bold",
   },
 });

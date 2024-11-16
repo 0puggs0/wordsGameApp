@@ -29,6 +29,7 @@ import { FlatList } from "react-native-gesture-handler";
 import ModalWindowDeleteFriend from "../components/modalWindowDeleteFriend";
 import Animated, { ZoomOut } from "react-native-reanimated";
 import { SearchAllUsers } from "../interfaces/getAllUsers";
+import { data } from "cheerio/dist/commonjs/api/attributes";
 
 type Props = StackScreenProps<RootStackParamList, "Friends", "MyStack">;
 
@@ -147,14 +148,14 @@ export default function Friends({ navigation }: Props) {
           </Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate("Stats")}>
-          {friends?.data?.image === null ? (
-            <View style={styles.logo}></View>
-          ) : (
-            <Image
-              style={styles.logo}
-              source={{ uri: friends?.data?.image }}
-            ></Image>
-          )}
+          <Image
+            style={styles.logo}
+            source={{
+              uri: !friends?.data?.image
+                ? "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                : friends?.data?.image,
+            }}
+          ></Image>
         </TouchableOpacity>
       </View>
 
@@ -197,14 +198,15 @@ export default function Friends({ navigation }: Props) {
                   style={styles.friendCard}
                 >
                   <View style={styles.friendCardContent}>
-                    {item.image === null ? (
-                      <View style={styles.friendLogo}></View>
-                    ) : (
-                      <Image
-                        style={styles.friendLogo}
-                        source={{ uri: item.image }}
-                      ></Image>
-                    )}
+                    <Image
+                      style={styles.friendLogo}
+                      source={{
+                        uri: !item.image
+                          ? "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                          : item.image,
+                      }}
+                    ></Image>
+
                     <Text style={styles.friendNameText}>{item.username}</Text>
                   </View>
                   {isLongPress ? (
@@ -227,6 +229,8 @@ export default function Friends({ navigation }: Props) {
                         navigation.navigate("Post", {
                           username: item.username,
                           userId: item.id,
+                          image: item.image,
+                          userFriends: 0,
                         })
                       }
                     >

@@ -7,14 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Storage } from "../utils/storage";
 import { useQuery } from "@tanstack/react-query";
 import { baseUrl, fetchData, headers } from "../constants/api";
 import Feather from "@expo/vector-icons/Feather";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
-import { useFocusEffect } from "@react-navigation/native";
 import { UserData } from "../interfaces/getUser";
 
 interface UserStats {
@@ -44,15 +43,10 @@ export default function Stats({ navigation, route }: Props) {
     },
   });
   const token = Storage.get("token");
-  const { data, isPending, refetch } = useQuery<UserData>({
-    queryKey: ["username"],
+  const { data, isPending } = useQuery<UserData>({
+    queryKey: ["user"],
     queryFn: async () => await fetchData("five_letters/user", headers, token),
   });
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [])
-  );
 
   useEffect(() => {
     const getStats = async () => {
@@ -163,7 +157,7 @@ export default function Stats({ navigation, route }: Props) {
         {userId === undefined
           ? statsData.map((item) => {
               return (
-                <View>
+                <View key={item.title + Math.random().toString()}>
                   <View style={styles.border}></View>
 
                   <View key={item.title} style={styles.statsRow}>
@@ -177,7 +171,6 @@ export default function Stats({ navigation, route }: Props) {
               return (
                 <View>
                   <View style={styles.border}></View>
-
                   <View key={item.title} style={styles.statsRow}>
                     <Text style={styles.textTitle}>{item.value}</Text>
                     <Text style={styles.textValue}>{item.title}</Text>
@@ -204,9 +197,12 @@ export default function Stats({ navigation, route }: Props) {
               <TouchableOpacity
                 onPress={() =>
                   userName !== undefined &&
+                  userImage !== undefined &&
                   navigation.navigate("Post", {
                     username: userName,
                     userId: userId,
+                    image: userImage,
+                    userFriends: userData?.message?.friends.length,
                   })
                 }
                 style={styles.button}

@@ -8,6 +8,7 @@ import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
 import { useMutation } from "@tanstack/react-query";
+import { client } from "../../App";
 type Props = StackScreenProps<RootStackParamList, "Login", "MyStack">;
 
 export default function Login({ navigation }: Props) {
@@ -31,7 +32,6 @@ export default function Login({ navigation }: Props) {
           if (data.data.token) {
             console.log(data.data.token);
             Storage.set("token", data.data.token);
-
             navigation.navigate("InitialScreen");
           }
         })

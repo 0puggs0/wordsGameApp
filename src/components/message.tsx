@@ -28,6 +28,7 @@ export default function Message(props: Props) {
           color: "#6F7276",
           fontFamily: "Nunito-Bold",
           fontSize: 18,
+          marginBottom: 16,
         }}
       >
         {props.date}
@@ -39,19 +40,6 @@ export default function Message(props: Props) {
             : styles.messageContainerReverse
         }
       >
-        <View style={{ gap: 5 }}>
-          <View style={styles.logo}></View>
-          <Text
-            style={{
-              color: "#6F7276",
-              fontFamily: "Nunito-Bold",
-              textAlign: "center",
-              fontSize: 18,
-            }}
-          >
-            {props.time}
-          </Text>
-        </View>
         <View
           style={{
             flexDirection: "row",
@@ -114,6 +102,17 @@ export default function Message(props: Props) {
             </TouchableOpacity>
           )}
         </View>
+        <Text
+          style={{
+            alignSelf: "flex-end",
+            fontFamily: "Nunito-Bold",
+            fontSize: 15,
+            color: "#6F7276",
+            bottom: 10,
+          }}
+        >
+          {props.time}
+        </Text>
       </View>
     </View>
   );
@@ -132,7 +131,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
+    gap: 10,
   },
   messageContainerReverse: {
     flexDirection: "row-reverse",
