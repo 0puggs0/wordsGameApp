@@ -9,6 +9,7 @@ import {
   View,
   Image,
 } from "react-native";
+import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useEffect, useRef, useState } from "react";
 import Message from "../components/message";
@@ -26,12 +27,13 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { UserData } from "../interfaces/getUser";
 type Props = StackScreenProps<RootStackParamList, "Post", "MyStack">;
 
-interface WordRequests {
-  message: Array<WordRequestsItem>;
+export interface WordRequests {
+  message: WordRequestsItem[];
 }
-interface WordRequestsItem {
+export interface WordRequestsItem {
   date: string;
   id: string;
   senderId: string;
@@ -42,6 +44,7 @@ interface WordRequestsItem {
 }
 export default function Post({ navigation, route }: Props) {
   const flatListRef = useRef<FlatList>(null);
+  const onEndReachedRef = useRef(false);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -60,9 +63,9 @@ export default function Post({ navigation, route }: Props) {
   const keyboardDidShow = () => {
     animatedPadding.value = withTiming(8, { duration: 250 });
     if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({
-        animated: true,
-      });
+      // flatListRef.current.scrollToEnd({
+      //   animated: true,
+      // });
     }
   };
 
@@ -77,13 +80,41 @@ export default function Post({ navigation, route }: Props) {
   });
   const { username, userId, image, userFriends } = route?.params;
   const [word, setWord] = useState("");
+  const [messages, setMessages] = useState<WordRequests["message"]>([]);
+  const [offset, setOffset] = useState(-1);
+  // useEffect(() => {
+  //   getMessages();
+  // }, [offset]);
   const token = Storage.get("token");
 
-  const wordRequests = useQuery<WordRequests>({
-    queryKey: ["wordRequests"],
-    queryFn: async () =>
-      await fetchData(`five_letters/word-requests/${userId}`, headers, token),
-  });
+  // const wordRequests = useQuery<WordRequests>({
+  //   queryKey: ["wordRequests", userId, offset],
+  //   queryFn: async () =>
+  //     await fetchData(`five_letters/word-requests/${userId}`, headers, token),
+  // });
+  // const { data } = useQuery<UserData>({
+  //   queryKey: ["user"],
+  //   queryFn: async () => await fetchData("five_letters/user", headers, token),
+  // });
+  const getMessages = async (offset: number) => {
+    const currentDataLength = messages.length;
+    // console.log(currentDataLength, "currentDataLength");
+    console.log(offset);
+    const data = await fetchData(
+      `five_letters/word-requests/${userId}?offset=${
+        messages.length < 0 ? 0 : offset
+      }`,
+      headers,
+      token
+    );
+
+    setMessages((prev) => [...prev, ...data.message]);
+  };
+  // console.log(
+  //   messages.map((item) => {
+  //     return { id: item.id, word: item.word };
+  //   })
+  // );
   const sendWord = async (word: string, userId: string) => {
     const headers = {
       "Content-Type": "application/json",
@@ -102,22 +133,12 @@ export default function Post({ navigation, route }: Props) {
     });
     if (response.ok) {
       setWord("");
-      Alert.alert("Слово отправлено", "", [
-        {
-          text: "OK",
-          onPress: () => {
-            if (flatListRef.current && wordRequests?.data?.message.length) {
-              flatListRef.current.scrollToEnd({
-                animated: true,
-              });
-            }
-          },
-        },
-      ]);
+      setOffset(-1);
+      setMessages([]);
+      // await getMessages(0);
     } else {
-      Alert.alert("Ошибка при отправке слова");
+      Alert.alert("Ошибка", "Данного слова нет в нашей базе");
     }
-    console.log(await response.json());
   };
 
   return (
@@ -179,23 +200,38 @@ export default function Post({ navigation, route }: Props) {
         keyboardVerticalOffset={5}
       >
         <FlatList
+          inverted
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            // getMessages(offset + 1);
+            setOffset((prev) => {
+              getMessages(prev + 1);
+              return prev + 1;
+            });
+            // console.log(offset);
+          }}
           contentContainerStyle={{ paddingVertical: 15 }}
-          initialNumToRender={wordRequests?.data?.message.length}
+          data={messages}
           keyExtractor={(item) => item.id}
-          data={wordRequests?.data?.message}
           showsVerticalScrollIndicator={false}
           ref={flatListRef}
-          renderItem={({ item, index }) => {
+          style={{ flex: 1 }}
+          renderItem={({
+            item,
+            index,
+          }: {
+            item: WordRequestsItem;
+            index: number;
+          }) => {
             if (item.senderId === userId) {
               return (
                 <Message
                   logo={""}
                   date={
                     dayjs(item.date).format("DD.MM.YYYY") !==
-                      dayjs(
-                        wordRequests?.data?.message[index - 1]?.date
-                      ).format("DD.MM.YYYY") || index === 0
-                      ? dayjs().diff(dayjs(item.date), "day") === 0
+                    dayjs(messages[index + 1]?.date).format("DD.MM.YYYY")
+                      ? dayjs().format("DD.MM.YYYY") ===
+                        dayjs(item.date).format("DD.MM.YYYY")
                         ? "Сегодня"
                         : dayjs(item.date).format("DD.MM.YYYY")
                       : ""
@@ -220,6 +256,7 @@ export default function Post({ navigation, route }: Props) {
                   sender={item.username}
                   status={item.status}
                   word={item.word}
+                  MessageStatus={() => <></>}
                 />
               );
             }
@@ -228,10 +265,9 @@ export default function Post({ navigation, route }: Props) {
                 logo={""}
                 date={
                   dayjs(item.date).format("DD.MM.YYYY") !==
-                    dayjs(wordRequests?.data?.message[index - 1]?.date).format(
-                      "DD.MM.YYYY"
-                    ) || index === 0
-                    ? dayjs().diff(dayjs(item.date), "day") === 0
+                  dayjs(messages[index + 1]?.date).format("DD.MM.YYYY")
+                    ? dayjs().format("DD.MM.YYYY") ===
+                      dayjs(item.date).format("DD.MM.YYYY")
                       ? "Сегодня"
                       : dayjs(item.date).format("DD.MM.YYYY")
                     : ""
@@ -243,10 +279,48 @@ export default function Post({ navigation, route }: Props) {
                 sender={item.username}
                 status={item.status}
                 word={item.word}
+                MessageStatus={() => {
+                  if (item.status === "done") {
+                    return (
+                      <Entypo
+                        style={{
+                          position: "absolute",
+                          right: 0,
+                          top: -6,
+                          padding: 3,
+                          backgroundColor: "#02C39A",
+                          borderRadius: 10,
+                          overflow: "hidden",
+                        }}
+                        name="check"
+                        size={12}
+                        color="black"
+                      />
+                    );
+                  }
+                  if (item.status === "failed") {
+                    return (
+                      <Entypo
+                        style={{
+                          position: "absolute",
+                          right: 0,
+                          top: -6,
+                          padding: 3,
+                          backgroundColor: "#fc4949",
+                          borderRadius: 10,
+                          overflow: "hidden",
+                        }}
+                        name="cross"
+                        size={12}
+                        color="black"
+                      />
+                    );
+                  } else return <></>;
+                }}
               />
             );
           }}
-        ></FlatList>
+        />
         <Animated.View
           style={[
             animatedStyle,
@@ -272,7 +346,7 @@ export default function Post({ navigation, route }: Props) {
           <TouchableOpacity
             onPress={async () => {
               await sendWord(word, userId);
-              await wordRequests.refetch();
+              // setTimeout(() => getMessages());
             }}
             style={styles.sendWordButton}
           >

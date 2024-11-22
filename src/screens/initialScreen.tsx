@@ -9,6 +9,7 @@ import { Storage } from "../utils/storage";
 import { fetchData, headers } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import { getNewFCMToken } from "../firebase/firebaseClient";
+import { client } from "../../App";
 
 type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
 
@@ -68,7 +69,14 @@ export default function InitialScreen({ navigation }: Props) {
         </View>
         <View style={styles.signOutBlock}>
           <Text style={styles.signOutTitle}>Хотите сменить аккаунт?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <TouchableOpacity
+            onPress={() => {
+              client.removeQueries();
+              Storage.clearAll();
+              client.invalidateQueries();
+              navigation.navigate("Login");
+            }}
+          >
             <Text style={styles.signOut}> Выйти</Text>
           </TouchableOpacity>
         </View>

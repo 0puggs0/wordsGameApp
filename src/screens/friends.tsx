@@ -169,6 +169,7 @@ export default function Friends({ navigation }: Props) {
       />
       <FlatList
         style={{ width: "100%" }}
+        keyExtractor={(item) => item.id}
         data={friends?.data?.friends}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingVertical: 20 }}

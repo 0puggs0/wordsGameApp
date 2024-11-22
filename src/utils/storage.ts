@@ -8,4 +8,7 @@ export class Storage {
   static get = (key: StorageKey) => {
     return this.storage.getString(key);
   };
+  static clearAll = () => {
+    return this.storage.clearAll();
+  };
 }

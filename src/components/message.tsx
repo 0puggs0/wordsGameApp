@@ -13,6 +13,7 @@ interface Props {
   button: () => void;
   isSender: boolean;
   status: string;
+  MessageStatus: () => React.JSX.Element;
 }
 
 export default function Message(props: Props) {
@@ -55,6 +56,7 @@ export default function Message(props: Props) {
             borderRadius: 10,
           }}
         >
+          <props.MessageStatus />
           <Text
             style={{
               fontFamily: "Nunito-Regular",
