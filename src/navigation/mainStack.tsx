@@ -9,6 +9,7 @@ import Post from "../screens/post";
 import Profile from "../screens/profile";
 import Friends from "../screens/friends";
 import Splash from "../screens/splash";
+import StatsBoard from "../screens/statsBoard";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -36,10 +37,16 @@ export function MyStack() {
         // options={{ gestureEnabled: false }}
       />
       <Stack.Screen
+        name="StatsBoard"
+        component={StatsBoard}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
         name="Post"
         component={Post}
-        // options={{ gestureEnabled: false }}
+        options={{ gestureEnabled: false }}
       />
+
       <Stack.Screen
         name="Profile"
         component={Profile}
@@ -63,7 +70,7 @@ export function MyStack() {
       <Stack.Screen
         name="Word"
         component={Word}
-        // options={{ gestureEnabled: false }}
+        options={{ gestureEnabled: false }}
       />
     </Stack.Navigator>
   );

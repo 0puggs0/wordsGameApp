@@ -4,13 +4,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { WordItem } from "../interfaces/wordScreenInterface";
 import { SCREEN_WIDTH } from "../constants/sizes";
 import Animated, {
-  interpolateColor,
-  useAnimatedProps,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
 
 interface Props {
@@ -66,7 +63,6 @@ export default function Symbol({
 
 const styles = StyleSheet.create({
   symbolBorderContainer: {
-    // width: 65,
     width: SCREEN_WIDTH / 5 - 12,
     height: SCREEN_WIDTH / 5 - 12,
     borderRadius: 15,

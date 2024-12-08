@@ -12,7 +12,6 @@ import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
 import { SCREEN_WIDTH } from "../constants/sizes";
 import Symbol from "../components/symbol";
-import { client } from "../../App";
 
 type Props = StackScreenProps<RootStackParamList, "Word", "MyStack">;
 
@@ -22,6 +21,7 @@ export default function Word({ navigation, route }: Props) {
   const sendedUser = route?.params?.username;
   const senderId = route?.params?.userId;
   const requestId = route?.params?.requestId;
+  const messageItem = route?.params?.messageItem;
 
   const [isError, setIsError] = useState(false);
   const [errorType, setErrorType] = useState("");
@@ -94,13 +94,17 @@ export default function Word({ navigation, route }: Props) {
       await postStats(false, data);
     }
     resetStates();
-    if (senderId !== undefined) {
-      client.invalidateQueries({ queryKey: ["wordRequests"] });
+    if (senderId !== undefined && messageItem) {
+      const newMessageItem = {
+        ...messageItem,
+        status: isWin ? "done" : "failed",
+      };
       navigation.navigate("Post", {
         userId: senderId,
-        username: sendedUser,
+        username: sendedUser || "",
         image: "",
         userFriends: 0,
+        messageItem: newMessageItem,
       });
     } else {
       navigation.navigate("InitialScreen");

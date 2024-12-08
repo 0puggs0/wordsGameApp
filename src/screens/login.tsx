@@ -1,5 +1,5 @@
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
@@ -8,7 +8,6 @@ import { RootStackParamList } from "../types/rootStackParamList";
 import { baseUrl } from "../constants/api";
 import { Storage } from "../utils/storage";
 import { useMutation } from "@tanstack/react-query";
-import { client } from "../../App";
 type Props = StackScreenProps<RootStackParamList, "Login", "MyStack">;
 
 export default function Login({ navigation }: Props) {
@@ -42,20 +41,20 @@ export default function Login({ navigation }: Props) {
     },
   });
 
+  const ref = useRef<TextInput>(null);
+
   return (
     <View style={styles.container}>
       <View style={styles.heading}>
         <Text style={styles.headingFirst}>Catch</Text>
         <Text style={styles.headingSecond}>Word</Text>
       </View>
-
       <View style={styles.title}>
         <Text style={styles.titleFirstText}>С возвращением!</Text>
         <Text style={styles.titleSecondText}>
           Пожалуйста войдите в ваш аккаунт
         </Text>
       </View>
-
       <View style={styles.centerBlock}>
         <View style={styles.inputBlock}>
           <TextInput
@@ -66,11 +65,13 @@ export default function Login({ navigation }: Props) {
             value={loginValue}
             onChangeText={(value) => setLoginValue(value)}
             autoCapitalize="none"
+            onSubmitEditing={() => ref?.current?.focus()}
             keyboardAppearance="dark"
           ></TextInput>
           <TextInput
             placeholderTextColor={"#484B55"}
             placeholder="Пароль"
+            ref={ref}
             secureTextEntry={true}
             keyboardAppearance="dark"
             selectionColor={"#02C39A"}
@@ -124,7 +125,6 @@ export default function Login({ navigation }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 103,

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -6,16 +6,19 @@ import { RootStackParamList } from "../types/rootStackParamList";
 import Feather from "@expo/vector-icons/Feather";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
-import { fetchData, headers } from "../constants/api";
+import { headers } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import { getNewFCMToken } from "../firebase/firebaseClient";
-import { client } from "../../App";
+import { fetchData } from "../utils/fetchData";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { client } from "../constants/queryClient";
 
 type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
 
 export default function InitialScreen({ navigation }: Props) {
   useEffect(() => {
     getNewFCMToken();
+    console.log("hello");
   }, []);
   const token = Storage.get("token");
   const { data } = useQuery<UserData>({
@@ -46,10 +49,10 @@ export default function InitialScreen({ navigation }: Props) {
       <View style={styles.bottomCategories}>
         <View style={styles.bottomCategoriesBlock}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Profile")}
+            onPress={() => navigation.navigate("StatsBoard")}
             style={styles.leftButton}
           >
-            <Feather name="settings" size={33} color="black" />
+            <Ionicons name="stats-chart" size={30} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("Stats")}
@@ -74,7 +77,8 @@ export default function InitialScreen({ navigation }: Props) {
               client.removeQueries();
               Storage.clearAll();
               client.invalidateQueries();
-              navigation.navigate("Login");
+              client.clear();
+              navigation.reset({ routes: [{ name: "Login" }] });
             }}
           >
             <Text style={styles.signOut}> Выйти</Text>

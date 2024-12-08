@@ -19,53 +19,41 @@ export default function ModalWindowDeleteFriend(props: Props) {
     <Modal visible={props.modalVisible} transparent={true} animationType="fade">
       <Pressable
         onPress={() => props.setModalVisible(!props.modalVisible)}
-        style={{
-          backgroundColor: "rgba(0, 0, 0, 0.4)",
-
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-          paddingVertical: 80,
-        }}
+        style={styles.container}
       >
         <View style={{ width: "100%", gap: 10 }}>
           <TouchableOpacity
-            style={{ width: "100%", paddingHorizontal: 34 }}
+            style={styles.button}
             onPress={() => {
               props.onDelete(props.currentUserId);
             }}
           >
             <Text
-              style={{
-                textAlign: "center",
-                padding: 20,
-                backgroundColor: "#CED5DB",
-                borderRadius: 15,
-                overflow: "hidden",
-                fontFamily: "Nunito-Medium",
-                fontSize: 20,
-                color: "red",
-              }}
+              style={[
+                styles.textButton,
+                {
+                  color: "red",
+                  padding: 15,
+                  fontFamily: "Nunito-Medium",
+                },
+              ]}
             >
               Убрать из друзей
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ width: "100%", paddingHorizontal: 34 }}
-            onPress={() => props.setModalVisible}
+            style={styles.button}
+            onPress={() => props.setModalVisible(false)}
           >
             <Text
-              style={{
-                padding: 15,
-                backgroundColor: "#CED5DB",
-                borderRadius: 15,
-                overflow: "hidden",
-                fontFamily: "Nunito-Regular",
-                fontSize: 20,
-                color: "#1D1F25",
-                textAlign: "center",
-              }}
+              style={[
+                styles.textButton,
+                {
+                  color: "#1D1F25",
+                  padding: 15,
+                  fontFamily: "Nunito-Regular",
+                },
+              ]}
             >
               Отмена
             </Text>
@@ -76,4 +64,21 @@ export default function ModalWindowDeleteFriend(props: Props) {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    width: "100%",
+    paddingVertical: 80,
+  },
+  button: { width: "100%", paddingHorizontal: 34 },
+  textButton: {
+    textAlign: "center",
+    backgroundColor: "#CED5DB",
+    borderRadius: 15,
+    overflow: "hidden",
+    fontSize: 20,
+  },
+});

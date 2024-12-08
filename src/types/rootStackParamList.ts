@@ -1,3 +1,5 @@
+import { WordRequestsItem } from "../screens/post";
+
 export type RootStackParamList = {
   InitialScreen: undefined;
   Stats:
@@ -10,7 +12,13 @@ export type RootStackParamList = {
       };
   Word:
     | undefined
-    | { message: string; username: string; requestId: string; userId: string };
+    | {
+        message: string;
+        username: string;
+        requestId: string;
+        userId: string;
+        messageItem: WordRequestsItem | undefined;
+      };
   Login: undefined;
   Register: undefined;
   Post: {
@@ -18,8 +26,10 @@ export type RootStackParamList = {
     userId: string;
     image: string;
     userFriends: number;
+    messageItem: WordRequestsItem | undefined;
   };
   Profile: undefined;
   Friends: undefined;
   Splash: undefined;
+  StatsBoard: undefined;
 };

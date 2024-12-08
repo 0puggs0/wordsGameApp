@@ -10,15 +10,16 @@ import {
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
-import { baseUrl, fetchData, headers } from "../constants/api";
+import { baseUrl, headers } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import * as ImagePicker from "expo-image-picker";
 import { FileService } from "../utils/uploadPhoto";
-import { client } from "../../App";
+import { fetchData } from "../utils/fetchData";
+import { client } from "../constants/queryClient";
 
 export default function Profile() {
   const [loginValue, setLoginValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
+  // const [passwordValue, setPasswordValue] = useState("");
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

@@ -7,14 +7,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
 import React, { useEffect, useState } from "react";
 import { Storage } from "../utils/storage";
 import { useQuery } from "@tanstack/react-query";
-import { baseUrl, fetchData, headers } from "../constants/api";
+import { baseUrl, headers } from "../constants/api";
 import Feather from "@expo/vector-icons/Feather";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { UserData } from "../interfaces/getUser";
+import { fetchData } from "../utils/fetchData";
 
 interface UserStats {
   message: UserStat;
@@ -129,28 +132,21 @@ export default function Stats({ navigation, route }: Props) {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerBlock}>
-          <Text style={styles.heading}>Профиль</Text>
-          {userId === undefined && (
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-              <Feather name="settings" size={29} color="#CED5DB" />
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <MaterialIcons name="arrow-back-ios-new" size={24} color="white" />
+          </TouchableOpacity>
+          {isPending ? (
+            <ActivityIndicator />
+          ) : (
+            <Text style={styles.nickname}>
+              @{userName === undefined ? data?.username : userName}
+            </Text>
           )}
-        </View>
-        <View style={styles.headerContainer}>
           {userName === undefined ? (
             <Image source={{ uri: data?.image }} style={styles.logo}></Image>
           ) : (
             <Image source={{ uri: userImage }} style={styles.logo}></Image>
           )}
-          <View>
-            {isPending ? (
-              <ActivityIndicator />
-            ) : (
-              <Text style={styles.nickname}>
-                @{userName === undefined ? data?.username : userName}
-              </Text>
-            )}
-          </View>
         </View>
       </View>
       <View>
@@ -186,7 +182,10 @@ export default function Stats({ navigation, route }: Props) {
             <TouchableOpacity style={styles.button}>
               <Text style={styles.textButton}>Сбросить статистику</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("StatsBoard")}
+            >
               <Text style={styles.textButton}>Таблица лидеров</Text>
             </TouchableOpacity>
           </>
@@ -203,6 +202,7 @@ export default function Stats({ navigation, route }: Props) {
                     userId: userId,
                     image: userImage,
                     userFriends: userData?.message?.friends.length,
+                    messageItem: undefined,
                   })
                 }
                 style={styles.button}
@@ -233,10 +233,14 @@ const styles = StyleSheet.create({
     paddingVertical: 80,
     flex: 1,
     backgroundColor: "#1D1F25",
-    gap: 20,
     justifyContent: "space-between",
   },
-  header: { gap: 25, paddingHorizontal: 34 },
+  header: {
+    gap: 25,
+    paddingHorizontal: 34,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   heading: {
     fontFamily: "Nunito-Bold",
     fontSize: 38,
@@ -265,10 +269,10 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   logo: {
-    width: 66,
-    height: 66,
+    width: 50,
+    height: 50,
     backgroundColor: "#CED5DB",
-    borderRadius: 32,
+    borderRadius: 25,
   },
   nickname: {
     color: "#CED5DB",
@@ -304,6 +308,7 @@ const styles = StyleSheet.create({
     borderColor: "#272931",
   },
   headerBlock: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

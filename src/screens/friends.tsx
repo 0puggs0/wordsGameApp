@@ -12,11 +12,10 @@ import React, { useCallback, useRef, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
-import { baseUrl, fetchData, headers } from "../constants/api";
+import { baseUrl, headers } from "../constants/api";
 import { UserData } from "../interfaces/getUser";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
-import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   BottomSheetBackdrop,
@@ -27,15 +26,40 @@ import {
 import { FriendRequestsData } from "../interfaces/getFriendRequests";
 import { FlatList } from "react-native-gesture-handler";
 import ModalWindowDeleteFriend from "../components/modalWindowDeleteFriend";
-import Animated, { ZoomOut } from "react-native-reanimated";
 import { SearchAllUsers } from "../interfaces/getAllUsers";
-import { data } from "cheerio/dist/commonjs/api/attributes";
+import { fetchData } from "../utils/fetchData";
+import FriendElement from "../components/friend";
+import Subscriber from "../components/subscriber";
 
 type Props = StackScreenProps<RootStackParamList, "Friends", "MyStack">;
 
 export default function Friends({ navigation }: Props) {
+  const [inputValue, setInputValue] = useState("");
+  const [searchInputValue, setSearchInputValue] = useState("");
+  const [isLongPress, setLongPress] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState("");
+  const [isSearchUser, setIsSearchUser] = useState(false);
+
   const token = Storage.get("token");
+
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  const friendRequests = useQuery<FriendRequestsData>({
+    queryKey: ["friends"],
+    queryFn: async () =>
+      await fetchData("five_letters/friend-requests", headers, token),
+  });
+  const friends = useQuery<UserData>({
+    queryKey: ["user"],
+    queryFn: async () => await fetchData("five_letters/user", headers, token),
+  });
+  const users = useQuery<SearchAllUsers>({
+    enabled: true,
+    queryKey: ["users"],
+    queryFn: async () => await fetchData("five_letters/users", headers, token),
+  });
+
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
@@ -46,31 +70,6 @@ export default function Friends({ navigation }: Props) {
     ),
     []
   );
-
-  const [inputValue, setInputValue] = useState("");
-  const [searchInputValue, setSearchInputValue] = useState("");
-  const [isLongPress, setLongPress] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState("");
-  const [isSearchUser, setIsSearchUser] = useState(false);
-
-  const friendRequests = useQuery<FriendRequestsData>({
-    queryKey: ["friends"],
-    queryFn: async () =>
-      await fetchData("five_letters/friend-requests", headers, token),
-  });
-
-  const friends = useQuery<UserData>({
-    queryKey: ["user"],
-    queryFn: async () => await fetchData("five_letters/user", headers, token),
-  });
-
-  const users = useQuery<SearchAllUsers>({
-    enabled: true,
-    queryKey: ["users"],
-    queryFn: async () => await fetchData("five_letters/users", headers, token),
-  });
-
   const fetchAcceptRequest = async (
     id: string,
     action: "approve" | "reject"
@@ -98,7 +97,6 @@ export default function Friends({ navigation }: Props) {
       friends.refetch();
     }
   };
-
   const removeFriend = async (id: string) => {
     const headers = {
       "Content-Type": "application/json",
@@ -158,7 +156,6 @@ export default function Friends({ navigation }: Props) {
           ></Image>
         </TouchableOpacity>
       </View>
-
       <TextInput
         placeholderTextColor={"#6F7276"}
         placeholder="Поиск друзей"
@@ -176,99 +173,62 @@ export default function Friends({ navigation }: Props) {
         renderItem={({ item }) => {
           if (item.username.toLowerCase().includes(inputValue.toLowerCase())) {
             return (
-              <Animated.View
-                exiting={ZoomOut.springify().stiffness(200).damping(80)}
-              >
-                <TouchableOpacity
-                  onPress={async () => {
-                    try {
-                      navigation.navigate("Stats", {
-                        userId: item.id,
-                        userFriends: 0,
-                        userName: item.username,
-                        userImage: item.image,
-                      });
-                      bottomSheetRef?.current?.dismiss();
-                    } catch (error) {
-                      console.error("Error fetching user stats:", error);
-                    }
-                  }}
-                  onLongPress={() =>
-                    isLongPress ? setLongPress(false) : setLongPress(true)
-                  }
-                  style={styles.friendCard}
-                >
-                  <View style={styles.friendCardContent}>
-                    <Image
-                      style={styles.friendLogo}
-                      source={{
-                        uri: !item.image
-                          ? "https://cdn-icons-png.flaticon.com/512/847/847969.png"
-                          : item.image,
-                      }}
-                    ></Image>
-
-                    <Text style={styles.friendNameText}>{item.username}</Text>
-                  </View>
-                  {isLongPress ? (
-                    <TouchableOpacity
-                      onPress={() => {
-                        setCurrentUserId(item.id);
-                        setModalVisible(true);
-                      }}
-                    >
-                      <AntDesign
-                        style={styles.closeButton}
-                        name="close"
-                        size={24}
-                        color="white"
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("Post", {
-                          username: item.username,
-                          userId: item.id,
-                          image: item.image,
-                          userFriends: 0,
-                        })
-                      }
-                    >
-                      <Feather name="mail" size={27} color="white" />
-                    </TouchableOpacity>
-                  )}
-                </TouchableOpacity>
-              </Animated.View>
+              <FriendElement
+                navigationPost={() => {
+                  navigation.navigate("Post", {
+                    username: item.username,
+                    userId: item.id,
+                    image: item.image,
+                    userFriends: 0,
+                    messageItem: undefined,
+                  });
+                }}
+                navigationStats={() => {
+                  navigation.navigate("Stats", {
+                    userId: item.id,
+                    userFriends: 0,
+                    userName: item.username,
+                    userImage: item.image,
+                  });
+                }}
+                bottomSheetRef={bottomSheetRef}
+                isLongPress={isLongPress}
+                setLongPress={setLongPress}
+                item={item}
+                setCurrentUserId={setCurrentUserId}
+                setModalVisible={setModalVisible}
+              />
             );
           }
           return null;
         }}
-      ></FlatList>
-      <View style={styles.bottomButtons}>
-        <TouchableOpacity
-          onPress={() => {
-            setIsSearchUser(true);
-            bottomSheetRef?.current?.present();
-          }}
-        >
-          <Text style={styles.searchButton}>Найти друзей</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setIsSearchUser(false);
-            bottomSheetRef?.current?.present();
-          }}
-        >
-          <View style={styles.friendRequestsContainer}>
-            <Text style={styles.friendRequestsText}>Заявки в друзья</Text>
-            <Text style={styles.friendRequestsCount}>
-              {friendRequests?.data?.message.length !== 0 &&
-                friendRequests?.data?.message.length}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      />
+      {!modalVisible && (
+        <View style={styles.bottomButtons}>
+          <TouchableOpacity
+            onPress={() => {
+              setIsSearchUser(true);
+              bottomSheetRef?.current?.present();
+            }}
+          >
+            <Text style={styles.searchButton}>Найти друзей</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setIsSearchUser(false);
+              bottomSheetRef?.current?.present();
+            }}
+          >
+            <View style={styles.friendRequestsContainer}>
+              <Text style={styles.friendRequestsText}>Заявки в друзья</Text>
+              <Text style={styles.friendRequestsCount}>
+                {friendRequests?.data?.message.length !== 0 &&
+                  friendRequests?.data?.message.length}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
       <BottomSheetModal
         ref={bottomSheetRef}
         backdropComponent={renderBackdrop}
@@ -304,77 +264,12 @@ export default function Friends({ navigation }: Props) {
               }}
               renderItem={({ item }) => {
                 return (
-                  <Animated.View
-                    exiting={ZoomOut.springify().stiffness(200).damping(80)}
-                  >
-                    <View style={styles.friendRequestCard}>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 10,
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: 50,
-                            height: 50,
-                            backgroundColor: "grey",
-                            borderRadius: 25,
-                          }}
-                        ></View>
-                        <Text
-                          style={{
-                            fontFamily: "Nunito-Regular",
-                            fontSize: 20,
-                            color: "white",
-                          }}
-                        >
-                          {item.username}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "row-reverse",
-                          alignItems: "center",
-                          gap: 5,
-                        }}
-                      >
-                        <TouchableOpacity
-                          onPress={() => {
-                            fetchAcceptRequest(item.id, "approve");
-                          }}
-                        >
-                          <AntDesign
-                            style={{
-                              padding: 5,
-                              backgroundColor: "#02C39A",
-                              borderRadius: 10,
-                              overflow: "hidden",
-                            }}
-                            name="check"
-                            size={24}
-                            color="white"
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() => fetchAcceptRequest(item.id, "reject")}
-                        >
-                          <AntDesign
-                            style={{
-                              padding: 5,
-                              backgroundColor: "#fc4949",
-                              borderRadius: 10,
-                              overflow: "hidden",
-                            }}
-                            name="close"
-                            size={24}
-                            color="white"
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </Animated.View>
+                  <Subscriber
+                    username={item.username}
+                    id={item.id}
+                    fetchAcceptRequest={fetchAcceptRequest}
+                    image={item.image}
+                  />
                 );
               }}
             />

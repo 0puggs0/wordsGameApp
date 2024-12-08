@@ -8,28 +8,27 @@ import {
   Text,
   View,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Message from "../components/message";
-import { useQuery } from "@tanstack/react-query";
 import { Storage } from "../utils/storage";
-import { baseUrl, fetchData, headers } from "../constants/api";
+import { baseUrl, headers } from "../constants/api";
 import Feather from "@expo/vector-icons/Feather";
 import { StackScreenProps } from "@react-navigation/stack";
 import dayjs from "dayjs";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { TextInput } from "react-native-gesture-handler";
-import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { UserData } from "../interfaces/getUser";
+import { fetchData } from "../utils/fetchData";
+import { useFocusEffect } from "@react-navigation/native";
 type Props = StackScreenProps<RootStackParamList, "Post", "MyStack">;
-
 export interface WordRequests {
   message: WordRequestsItem[];
 }
@@ -43,8 +42,8 @@ export interface WordRequestsItem {
   status: string;
 }
 export default function Post({ navigation, route }: Props) {
+  const { username, userId, image, userFriends, messageItem } = route?.params;
   const flatListRef = useRef<FlatList>(null);
-  const onEndReachedRef = useRef(false);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -62,59 +61,45 @@ export default function Post({ navigation, route }: Props) {
   const animatedPadding = useSharedValue(25);
   const keyboardDidShow = () => {
     animatedPadding.value = withTiming(8, { duration: 250 });
-    if (flatListRef.current) {
-      // flatListRef.current.scrollToEnd({
-      //   animated: true,
-      // });
-    }
   };
+
+  useEffect(() => {
+    setOffset((prev) => prev + 1);
+    setMessages([]);
+    getMessages(offset);
+  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      if (messageItem) {
+        setMessages((prev) =>
+          prev.map((item) => {
+            return item.id === messageItem.id ? messageItem : item;
+          })
+        );
+      }
+    }, [messageItem])
+  );
 
   const keyboardDidHide = () => {
     animatedPadding.value = withTiming(25, { duration: 250 });
   };
-
   const animatedStyle = useAnimatedStyle(() => {
     return {
       paddingHorizontal: animatedPadding.value,
     };
   });
-  const { username, userId, image, userFriends } = route?.params;
   const [word, setWord] = useState("");
   const [messages, setMessages] = useState<WordRequests["message"]>([]);
   const [offset, setOffset] = useState(-1);
-  // useEffect(() => {
-  //   getMessages();
-  // }, [offset]);
   const token = Storage.get("token");
-
-  // const wordRequests = useQuery<WordRequests>({
-  //   queryKey: ["wordRequests", userId, offset],
-  //   queryFn: async () =>
-  //     await fetchData(`five_letters/word-requests/${userId}`, headers, token),
-  // });
-  // const { data } = useQuery<UserData>({
-  //   queryKey: ["user"],
-  //   queryFn: async () => await fetchData("five_letters/user", headers, token),
-  // });
   const getMessages = async (offset: number) => {
-    const currentDataLength = messages.length;
-    // console.log(currentDataLength, "currentDataLength");
-    console.log(offset);
     const data = await fetchData(
-      `five_letters/word-requests/${userId}?offset=${
-        messages.length < 0 ? 0 : offset
-      }`,
+      `five_letters/word-requests/${userId}?offset=${offset}`,
       headers,
       token
     );
-
     setMessages((prev) => [...prev, ...data.message]);
   };
-  // console.log(
-  //   messages.map((item) => {
-  //     return { id: item.id, word: item.word };
-  //   })
-  // );
   const sendWord = async (word: string, userId: string) => {
     const headers = {
       "Content-Type": "application/json",
@@ -133,14 +118,26 @@ export default function Post({ navigation, route }: Props) {
     });
     if (response.ok) {
       setWord("");
-      setOffset(-1);
-      setMessages([]);
-      // await getMessages(0);
+      setMessages((prev) => [
+        {
+          word: word,
+          date: new Date().toString(),
+          username: "",
+          id: "",
+          senderId: "",
+          targetId: "",
+          status: "pending",
+        },
+        ...prev,
+      ]);
+      flatListRef?.current?.scrollToIndex({
+        index: 0,
+        animated: true,
+      });
     } else {
       Alert.alert("Ошибка", "Данного слова нет в нашей базе");
     }
   };
-
   return (
     <View onTouchStart={() => Keyboard.dismiss()} style={styles.container}>
       <View
@@ -203,16 +200,16 @@ export default function Post({ navigation, route }: Props) {
           inverted
           onEndReachedThreshold={0.5}
           onEndReached={() => {
-            // getMessages(offset + 1);
-            setOffset((prev) => {
-              getMessages(prev + 1);
-              return prev + 1;
-            });
-            // console.log(offset);
+            if (messages.length > 14) {
+              setOffset((prev) => {
+                getMessages(prev + 1);
+                return prev + 1;
+              });
+            }
           }}
           contentContainerStyle={{ paddingVertical: 15 }}
           data={messages}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id + Math.random().toString()}
           showsVerticalScrollIndicator={false}
           ref={flatListRef}
           style={{ flex: 1 }}
@@ -244,14 +241,15 @@ export default function Post({ navigation, route }: Props) {
                       ? "Отправил вам слово"
                       : `Слово не отгадано - `
                   }
-                  button={() =>
+                  button={() => {
                     navigation.navigate("Word", {
                       message: item.word,
                       username: item.username,
                       requestId: item.id,
                       userId: item.senderId,
-                    })
-                  }
+                      messageItem: item,
+                    });
+                  }}
                   isSender={false}
                   sender={item.username}
                   status={item.status}
@@ -321,6 +319,7 @@ export default function Post({ navigation, route }: Props) {
             );
           }}
         />
+
         <Animated.View
           style={[
             animatedStyle,
@@ -346,7 +345,6 @@ export default function Post({ navigation, route }: Props) {
           <TouchableOpacity
             onPress={async () => {
               await sendWord(word, userId);
-              // setTimeout(() => getMessages());
             }}
             style={styles.sendWordButton}
           >
@@ -389,10 +387,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 13,
     borderBottomRightRadius: 13,
     backgroundColor: "#272931",
+    height: "100%",
+    paddingVertical: 19,
   },
   icon: {
     overflow: "hidden",
     paddingHorizontal: 17,
-    padding: 20,
   },
 });

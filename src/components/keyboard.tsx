@@ -25,12 +25,12 @@ export function Keyboard(props: Props) {
             return (
               <TouchableOpacity
                 key={item.id}
-                style={{
-                  flexGrow: isLastItem ? 1 : 0,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                disabled={props.russianKeyboardData[index].disabled}
+                style={[
+                  styles.keyButton,
+                  {
+                    flexGrow: isLastItem ? 1 : 0,
+                  },
+                ]}
                 onPress={() =>
                   item.letter.length === 1
                     ? props.handleInput(item.letter)
@@ -38,22 +38,18 @@ export function Keyboard(props: Props) {
                 }
               >
                 {index === props.russianKeyboardData.length - 1 ? (
-                  item.component()
+                  <item.component />
                 ) : (
                   <Text
-                    style={{
-                      overflow: "hidden",
-                      fontSize: 23,
-                      paddingVertical: 8,
-                      width: isLastItem ? "100%" : 27,
-                      flexGrow: isLastItem ? 1 : 0,
-                      color: "white",
-                      textAlign: "center",
-                      backgroundColor:
-                        props.russianKeyboardData[index].backgroundColor,
-                      borderRadius: 8,
-                      fontFamily: "Nunito-Regular",
-                    }}
+                    style={[
+                      {
+                        width: isLastItem ? "100%" : 27,
+                        flexGrow: isLastItem ? 1 : 0,
+                        backgroundColor:
+                          props.russianKeyboardData[index].backgroundColor,
+                      },
+                      styles.keyText,
+                    ]}
                   >
                     {item.letter}
                   </Text>
@@ -64,20 +60,13 @@ export function Keyboard(props: Props) {
         </View>
         <TouchableOpacity
           disabled={props.disabledButton}
-          onPress={() => props.handleCheck()}
+          onPress={props.handleCheck}
           style={styles.checkButton}
         >
           {!props.disabledButton ? (
             <Text style={styles.button}>ПРОВЕРИТЬ СЛОВО</Text>
           ) : (
-            <View
-              style={{
-                paddingVertical: 15,
-                paddingHorizontal: 10,
-                backgroundColor: "#48495F",
-                width: "100%",
-              }}
-            >
+            <View style={styles.freezeButton}>
               <ActivityIndicator size={"small"} />
             </View>
           )}
@@ -98,21 +87,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 5,
   },
-  wordText: {
+  keyButton: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  keyText: {
     overflow: "hidden",
     fontSize: 23,
     paddingVertical: 8,
-    width: 27,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#343548",
     borderRadius: 8,
     fontFamily: "Nunito-Regular",
   },
-  lastWordBlock: {
-    width: 122,
-  },
-  wordBlock: {},
   button: {
     paddingVertical: 15,
     paddingHorizontal: 10,
@@ -129,5 +116,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     width: "100%",
     marginTop: 5,
+  },
+  freezeButton: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    backgroundColor: "#48495F",
+    width: "100%",
   },
 });

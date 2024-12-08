@@ -5,4 +5,5 @@ export interface FriendRequest {
   id: string;
   userId: string;
   username: string;
+  image: string;
 }

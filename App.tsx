@@ -3,13 +3,13 @@ import { Alert, StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
 import { MyStack } from "./src/navigation/mainStack";
 import { NavigationContainer } from "@react-navigation/native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect } from "react";
 import messaging from "@react-native-firebase/messaging";
+import { client } from "./src/constants/queryClient";
 
-export const client = new QueryClient();
 export default function App() {
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {

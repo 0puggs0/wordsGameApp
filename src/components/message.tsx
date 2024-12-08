@@ -16,24 +16,12 @@ interface Props {
   MessageStatus: () => React.JSX.Element;
 }
 
-export default function Message(props: Props) {
+function Message(props: Props) {
+  const status = props.status;
+  const gap = status !== "pending" || (status === "pending" && props.isSender);
   return (
-    <View
-      style={{
-        marginBottom: 16,
-      }}
-    >
-      <Text
-        style={{
-          textAlign: "center",
-          color: "#6F7276",
-          fontFamily: "Nunito-Bold",
-          fontSize: 18,
-          marginBottom: 16,
-        }}
-      >
-        {props.date}
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.date}>{props.date}</Text>
       <View
         style={
           !props.isSender
@@ -42,61 +30,25 @@ export default function Message(props: Props) {
         }
       >
         <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap:
-              props.status !== "pending" ||
-              (props.status === "pending" && props.isSender)
-                ? 0
-                : 10,
-            paddingHorizontal: 22,
-            paddingVertical: 14,
-            backgroundColor: "#CED5DB",
-            borderRadius: 10,
-          }}
+          style={[
+            styles.messageContent,
+            {
+              gap: gap ? 0 : 10,
+            },
+          ]}
         >
           <props.MessageStatus />
-          <Text
-            style={{
-              fontFamily: "Nunito-Regular",
-              fontSize: 16,
-              color: "#1D1F25",
-            }}
-          >
-            {props.message}
-          </Text>
-          {props.status !== "pending" && (
-            <Text
-              style={{
-                fontFamily: "Nunito-Bold",
-                fontSize: 16,
-                color: "#1D1F25",
-              }}
-            >
-              {props.word.toUpperCase()}
-            </Text>
+          <Text style={styles.message}>{props.message}</Text>
+          {status !== "pending" && (
+            <Text style={styles.word}>{props.word.toUpperCase()}</Text>
           )}
-          {props.status === "pending" && props.isSender && (
-            <Text
-              style={{
-                fontFamily: "Nunito-Bold",
-                fontSize: 16,
-                color: "#1D1F25",
-              }}
-            >
-              {props.word.toUpperCase()}
-            </Text>
+          {status === "pending" && props.isSender && (
+            <Text style={styles.word}>{props.word.toUpperCase()}</Text>
           )}
-          {!props.isSender && props.status === "pending" && (
+          {!props.isSender && status === "pending" && (
             <TouchableOpacity onPress={props.button}>
               <MaterialIcons
-                style={{
-                  padding: 6,
-                  backgroundColor: "#02C39A",
-                  borderRadius: 8,
-                  overflow: "hidden",
-                }}
+                style={styles.button}
                 name="done"
                 size={24}
                 color="black"
@@ -104,23 +56,16 @@ export default function Message(props: Props) {
             </TouchableOpacity>
           )}
         </View>
-        <Text
-          style={{
-            alignSelf: "flex-end",
-            fontFamily: "Nunito-Bold",
-            fontSize: 15,
-            color: "#6F7276",
-            bottom: 10,
-          }}
-        >
-          {props.time}
-        </Text>
+        <Text style={styles.time}>{props.time}</Text>
       </View>
     </View>
   );
 }
-
+export default Message;
 const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+  },
   logo: {
     width: 46,
     height: 46,
@@ -140,5 +85,43 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 15,
     width: "100%",
+  },
+  messageContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+    backgroundColor: "#CED5DB",
+    borderRadius: 10,
+  },
+  date: {
+    textAlign: "center",
+    color: "#6F7276",
+    fontFamily: "Nunito-Bold",
+    fontSize: 18,
+    marginBottom: 16,
+  },
+  message: {
+    fontFamily: "Nunito-Regular",
+    fontSize: 16,
+    color: "#1D1F25",
+  },
+  word: {
+    fontFamily: "Nunito-Bold",
+    fontSize: 16,
+    color: "#1D1F25",
+  },
+  button: {
+    padding: 6,
+    backgroundColor: "#02C39A",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  time: {
+    alignSelf: "flex-end",
+    fontFamily: "Nunito-Bold",
+    fontSize: 15,
+    color: "#6F7276",
+    bottom: 10,
   },
 });
