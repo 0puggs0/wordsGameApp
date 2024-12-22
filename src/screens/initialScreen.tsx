@@ -18,7 +18,6 @@ type Props = StackScreenProps<RootStackParamList, "InitialScreen", "MyStack">;
 export default function InitialScreen({ navigation }: Props) {
   useEffect(() => {
     getNewFCMToken();
-    console.log("hello");
   }, []);
   const token = Storage.get("token");
   const { data } = useQuery<UserData>({

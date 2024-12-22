@@ -1,5 +1,4 @@
 import {
-  Alert,
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
@@ -12,22 +11,15 @@ import {
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React from "react";
 import Message from "../components/message";
-import { Storage } from "../utils/storage";
-import { baseUrl, headers } from "../constants/api";
 import Feather from "@expo/vector-icons/Feather";
 import { StackScreenProps } from "@react-navigation/stack";
 import dayjs from "dayjs";
 import { RootStackParamList } from "../types/rootStackParamList";
 import { TextInput } from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
-import { fetchData } from "../utils/fetchData";
-import { useFocusEffect } from "@react-navigation/native";
+import Animated from "react-native-reanimated";
+import usePost from "../hooks/usePost";
 type Props = StackScreenProps<RootStackParamList, "Post", "MyStack">;
 export interface WordRequests {
   message: WordRequestsItem[];
@@ -43,101 +35,17 @@ export interface WordRequestsItem {
 }
 export default function Post({ navigation, route }: Props) {
   const { username, userId, image, userFriends, messageItem } = route?.params;
-  const flatListRef = useRef<FlatList>(null);
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      keyboardDidShow
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      keyboardDidHide
-    );
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
-  const animatedPadding = useSharedValue(25);
-  const keyboardDidShow = () => {
-    animatedPadding.value = withTiming(8, { duration: 250 });
-  };
+  const {
+    animatedStyle,
+    messages,
+    getMessages,
+    sendWord,
+    flatListRef,
+    word,
+    setWord,
+    setOffset,
+  } = usePost(userId, messageItem);
 
-  useEffect(() => {
-    setOffset((prev) => prev + 1);
-    setMessages([]);
-    getMessages(offset);
-  }, []);
-  useFocusEffect(
-    useCallback(() => {
-      if (messageItem) {
-        setMessages((prev) =>
-          prev.map((item) => {
-            return item.id === messageItem.id ? messageItem : item;
-          })
-        );
-      }
-    }, [messageItem])
-  );
-
-  const keyboardDidHide = () => {
-    animatedPadding.value = withTiming(25, { duration: 250 });
-  };
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      paddingHorizontal: animatedPadding.value,
-    };
-  });
-  const [word, setWord] = useState("");
-  const [messages, setMessages] = useState<WordRequests["message"]>([]);
-  const [offset, setOffset] = useState(-1);
-  const token = Storage.get("token");
-  const getMessages = async (offset: number) => {
-    const data = await fetchData(
-      `five_letters/word-requests/${userId}?offset=${offset}`,
-      headers,
-      token
-    );
-    setMessages((prev) => [...prev, ...data.message]);
-  };
-  const sendWord = async (word: string, userId: string) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "",
-    };
-    if (token) {
-      headers.Authorization = token;
-    }
-    const response = await fetch(`${baseUrl}/five_letters/send-word`, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        word: word,
-        userId: userId,
-      }),
-    });
-    if (response.ok) {
-      setWord("");
-      setMessages((prev) => [
-        {
-          word: word,
-          date: new Date().toString(),
-          username: "",
-          id: "",
-          senderId: "",
-          targetId: "",
-          status: "pending",
-        },
-        ...prev,
-      ]);
-      flatListRef?.current?.scrollToIndex({
-        index: 0,
-        animated: true,
-      });
-    } else {
-      Alert.alert("Ошибка", "Данного слова нет в нашей базе");
-    }
-  };
   return (
     <View onTouchStart={() => Keyboard.dismiss()} style={styles.container}>
       <View
@@ -319,7 +227,6 @@ export default function Post({ navigation, route }: Props) {
             );
           }}
         />
-
         <Animated.View
           style={[
             animatedStyle,

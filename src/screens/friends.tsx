@@ -4,32 +4,21 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
   Keyboard,
   Image,
 } from "react-native";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useQuery } from "@tanstack/react-query";
-import { Storage } from "../utils/storage";
-import { baseUrl, headers } from "../constants/api";
-import { UserData } from "../interfaces/getUser";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/rootStackParamList";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import {
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
-  BottomSheetFlatList,
-  BottomSheetModal,
-} from "@gorhom/bottom-sheet";
-import { FriendRequestsData } from "../interfaces/getFriendRequests";
+import { BottomSheetFlatList, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlatList } from "react-native-gesture-handler";
 import ModalWindowDeleteFriend from "../components/modalWindowDeleteFriend";
-import { SearchAllUsers } from "../interfaces/getAllUsers";
-import { fetchData } from "../utils/fetchData";
 import FriendElement from "../components/friend";
 import Subscriber from "../components/subscriber";
+import useFriends from "../hooks/useFriends";
+import { renderBackdrop } from "../components/backdrop";
 
 type Props = StackScreenProps<RootStackParamList, "Friends", "MyStack">;
 
@@ -37,105 +26,20 @@ export default function Friends({ navigation }: Props) {
   const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState("");
   const [isLongPress, setLongPress] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [currentUserId, setCurrentUserId] = useState("");
   const [isSearchUser, setIsSearchUser] = useState(false);
 
-  const token = Storage.get("token");
-
+  const {
+    friendRequests,
+    friends,
+    users,
+    addFriend,
+    fetchAcceptRequest,
+    removeFriend,
+    setModalVisible,
+    modalVisible,
+  } = useFriends();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-
-  const friendRequests = useQuery<FriendRequestsData>({
-    queryKey: ["friends"],
-    queryFn: async () =>
-      await fetchData("five_letters/friend-requests", headers, token),
-  });
-  const friends = useQuery<UserData>({
-    queryKey: ["user"],
-    queryFn: async () => await fetchData("five_letters/user", headers, token),
-  });
-  const users = useQuery<SearchAllUsers>({
-    enabled: true,
-    queryKey: ["users"],
-    queryFn: async () => await fetchData("five_letters/users", headers, token),
-  });
-
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        {...props}
-      />
-    ),
-    []
-  );
-  const fetchAcceptRequest = async (
-    id: string,
-    action: "approve" | "reject"
-  ) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "",
-    };
-    if (token) {
-      headers.Authorization = token;
-    }
-    const response = await fetch(
-      `https://oh.sssh.it/five_letters/friend-requests/${id}`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          action,
-        }),
-        headers: headers,
-      }
-    );
-
-    friendRequests.refetch();
-    if (action === "approve") {
-      friends.refetch();
-    }
-  };
-  const removeFriend = async (id: string) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "",
-    };
-    if (token) {
-      headers.Authorization = token;
-    }
-    const response = await fetch(
-      `${baseUrl}/five_letters/remove-friend/${id}`,
-      {
-        method: "POST",
-        body: "",
-        headers: headers,
-      }
-    );
-    friends.refetch();
-    setModalVisible(false);
-  };
-  const addFriend = async (id: string) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: "",
-    };
-    if (token) {
-      headers.Authorization = token;
-    }
-    const response = await fetch(`${baseUrl}/five_letters/add-friend`, {
-      method: "POST",
-      body: JSON.stringify({
-        userId: id,
-      }),
-      headers: headers,
-    });
-    if (response.ok) {
-      Alert.alert("Заявка отправлена", "");
-    }
-  };
-
   return (
     <View onTouchStart={Keyboard.dismiss} style={styles.container}>
       <View style={styles.topBlock}>
